@@ -2,345 +2,432 @@
 <html lang="ka">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e1014">
 <title>მკერდი + პრესი · პუშ-აპების პროგრამა</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f1115;--card:#181c24;--card2:#1f2530;--line:#2a3140;--text:#e8ecf3;--muted:#8b95a8;--accent:#ff4d3d;--accent2:#ffb02e;--ok:#3ddc84;--blue:#4da3ff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans Georgian",system-ui,"Segoe UI",Sylfaen,sans-serif;font-size:16px;line-height:1.45}
-header{padding:20px 16px 8px;max-width:960px;margin:0 auto}
-h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.3px}
-h1 span{color:var(--accent)}
-.sub{color:var(--muted);margin:4px 0 0;font-size:14px}
-main{max-width:960px;margin:0 auto;padding:0 16px 80px}
-.tabs{display:flex;gap:8px;margin:14px 0}
-.tabs button{flex:1;padding:10px 6px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-weight:600;cursor:pointer}
-.tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
-.stat b{display:block;font-size:22px;font-weight:800}
-.stat small{color:var(--muted);font-size:12px}
-/* დაბალ ეკრანზე პლეერი ვიწროვდება, რომ სიმაღლის 42%-ზე მეტი არ დაიკავოს და სია ჩანდეს */
-.player{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:12px auto;max-width:calc(42vh*16/9);position:sticky;top:0;z-index:5;box-shadow:0 8px 30px rgba(0,0,0,.45)}
-.video{aspect-ratio:16/9;background:#000;position:relative}
-.video iframe,.video #yt{position:absolute;inset:0;width:100%;height:100%}
-.video .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:20px;font-size:14px;pointer-events:none}
-.video .fallback a{pointer-events:auto}
-.pinfo{padding:10px 14px 12px;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
-.pinfo .t{flex:1;min-width:200px}
-.pinfo .t b{font-size:17px}
-.pinfo .t small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
-.pinfo .cue{margin:6px 0 0;font-size:14px;color:#d5dbe6}
-.pbtns{display:flex;gap:6px;flex-wrap:wrap}
-button.sm{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:inherit;font-size:14px;cursor:pointer}
-button.sm.acc{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
-.rules{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:12px 0;font-size:14px}
-.rules summary{cursor:pointer;font-weight:600;font-size:15px}
-.rules ul{margin:8px 0 0;padding-left:18px}
-.rules li{margin:4px 0}
-.phase{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden}
-.phase h3{margin:0;padding:10px 14px;font-size:14px;color:var(--muted);font-weight:600;background:var(--card2);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.phase h3 em{font-style:normal;color:var(--text)}
-.ex{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer}
-.ex.on{background:rgba(255,77,61,.08)}
-.ex.done{opacity:.55}
-.ex.done .n{text-decoration:line-through}
-.ex input[type=checkbox]{width:24px;height:24px;accent-color:var(--ok);cursor:pointer}
-.ex .n{font-weight:600}
-.ex .n .tag{display:inline-block;font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:middle}
-.tag.chest{background:rgba(255,77,61,.18);color:#ff8a7e}
-.tag.abs{background:rgba(77,163,255,.18);color:#8fc3ff}
-.tag.star{background:rgba(255,176,46,.18);color:var(--accent2)}
-.ex small{display:block;color:var(--muted);font-size:12.5px;font-weight:400}
-.ex .rep{display:flex;align-items:center;gap:4px}
-.ex .rep input{width:56px;padding:7px 6px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:inherit;text-align:center}
-.ex .rep span{font-size:12px;color:var(--muted)}
-.round{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0;padding:12px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;flex-wrap:wrap}
-.round .bar{flex:1;min-width:140px;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
-.round .bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
-.timer{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;text-align:center;padding:10px 0 4px}
+:root{
+  --bg:#0e1014;--panel:#161a21;--panel2:#1d222b;--line:#262c37;
+  --text:#eef1f6;--muted:#98a2b3;--dim:#6b7484;
+  --chest:#ff5a47;--abs:#5aa9ff;--ok:#38d27f;--warn:#ffb547;
+  --r:14px;--pad:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:280px}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 "Noto Sans Georgian",system-ui,"Segoe UI",Sylfaen,sans-serif;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+.wrap{max-width:640px;margin:0 auto;padding:0 var(--pad)}
+h1,h2,h3,p{margin:0}
 .hidden{display:none!important}
-h2{font-size:18px;margin:26px 0 8px}
-.chart{display:flex;align-items:flex-end;gap:4px;height:110px;padding:8px;background:var(--card);border:1px solid var(--line);border-radius:14px}
-.chart div{flex:1;background:var(--accent);border-radius:4px 4px 0 0;position:relative;min-height:2px}
-.chart div span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
-.chart div b{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:10px}
-.chart.empty{align-items:center;justify-content:center;color:var(--muted);font-size:14px}
-table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-td,th{padding:8px 12px;border-top:1px solid var(--line);text-align:left}
-th{background:var(--card2);color:var(--muted);font-weight:600;font-size:13px;border-top:0}
-td:last-child,th:last-child{text-align:right;white-space:nowrap}
-.hint{background:rgba(255,176,46,.12);border:1px solid rgba(255,176,46,.4);border-radius:12px;padding:10px 14px;margin:12px 0;font-size:14px}
-.hint.ok{background:rgba(61,220,132,.1);border-color:rgba(61,220,132,.4)}
-.cal{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin:8px 0}
-.cal i{aspect-ratio:1;border-radius:4px;background:var(--line);display:block}
+
+/* ზედა ზოლი */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0 10px}
+.brand{font-size:19px;font-weight:700;line-height:1.2}
+.brand em{font-style:normal;color:var(--chest)}
+.brand small{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px}
+.seg button{padding:7px 12px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--panel2);color:var(--text);box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
+.seg.wide{display:flex;margin:8px 0 6px}
+.seg.wide button{flex:1;padding:9px 6px;font-size:14px}
+.seg.wide button.on{background:var(--chest);color:#fff}
+.lvlhint{font-size:13px;color:var(--muted);margin:0 0 12px;min-height:20px}
+
+/* პლეერი */
+.player{position:sticky;top:0;z-index:20;background:var(--bg);padding-top:6px;margin:0 calc(-1*var(--pad))}
+.player .in{margin:0 var(--pad);background:#000;border-radius:var(--r);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.video{aspect-ratio:16/9;position:relative;background:#000;max-height:38vh}
+.video #yt,.video iframe{position:absolute;inset:0;width:100%;height:100%}
+.fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:13px;color:var(--muted);pointer-events:none}
+.fallback a{color:var(--abs);pointer-events:auto;margin-left:4px}
+.pbar{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;background:var(--panel)}
+.pbar .step{font-size:12px;font-weight:700;color:var(--muted);white-space:nowrap;background:var(--panel2);padding:3px 8px;border-radius:99px}
+.pbar .nm{flex:1;min-width:0;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:38px;height:38px;border-radius:10px;background:var(--panel2);display:grid;place-items:center;font-size:15px;flex:none}
+.ib:active{transform:scale(.96)}
+.player::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;background:linear-gradient(var(--bg),transparent)}
+
+/* ახლა */
+.now{margin:16px 0 0;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.2px;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--chest);flex:none;display:inline-block}
+.dot.abs{background:var(--abs)}
+.now h2{font-size:20px;font-weight:700;line-height:1.25;margin-top:6px}
+.now .en{font-size:13px;color:var(--dim);margin-top:2px}
+.now .cue{margin-top:10px;font-size:14.5px;color:#d3d9e3}
+.now .star{margin-top:10px;font-size:13px;color:var(--warn)}
+.act{display:flex;gap:10px;align-items:stretch;margin-top:14px}
+.res{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:0 12px 0 14px;flex:1;min-width:0}
+.res label{font-size:12px;color:var(--muted);white-space:nowrap}
+.res input{width:64px;background:none;border:0;outline:0;font-size:22px;font-weight:700;text-align:center;padding:10px 0;min-width:0;flex:1}
+.res input::placeholder{color:var(--dim);font-weight:600}
+.res span{font-size:12px;color:var(--muted);white-space:nowrap}
+.btn{border-radius:12px;padding:0 18px;font-weight:700;font-size:15px;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+.btn.ok{background:var(--ok);color:#06210f}
+.btn.pri{background:var(--chest);color:#fff}
+.btn.ghost{background:var(--panel2);color:var(--text)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:active:not(:disabled){transform:scale(.98)}
+.donebox{text-align:center;padding:10px 0 2px}
+.donebox b{display:block;font-size:20px}
+.donebox p{color:var(--muted);font-size:14px;margin-top:4px}
+
+/* როგორ მუშაობს */
+.how{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:0 16px}
+.how summary{list-style:none;cursor:pointer;padding:13px 0;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.how summary::-webkit-details-marker{display:none}
+.how summary::after{content:"+";color:var(--muted);font-size:18px;font-weight:400}
+.how[open] summary::after{content:"–"}
+.how ol{margin:0;padding:0 0 14px 0;list-style:none;counter-reset:s;font-size:14px;color:#d3d9e3}
+.how li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;gap:8px;padding:6px 0}
+.how li::before{content:counter(s);width:22px;height:22px;border-radius:50%;background:var(--panel2);color:var(--muted);font-size:12px;font-weight:700;display:grid;place-items:center}
+.how li b{color:var(--text)}
+
+/* სია */
+.sect{display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 10px}
+.sect h3{font-size:16px;font-weight:700}
+.sect span{font-size:13px;color:var(--muted)}
+.ph{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.phh{display:flex;align-items:baseline;gap:8px;padding:10px 14px 8px;font-size:13px;font-weight:700;color:var(--muted)}
+.phh b{color:var(--text)}
+.phh small{font-weight:400;color:var(--dim)}
+.phh .star{margin-left:auto;color:var(--warn);font-size:12px;font-weight:600}
+.row{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:11px 14px;border-top:1px solid var(--line);cursor:pointer;position:relative}
+.row.on{background:rgba(255,90,71,.07)}
+.row.on.abs{background:rgba(90,169,255,.07)}
+.row.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--chest)}
+.row.on.abs::before{background:var(--abs)}
+.cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;color:#06210f;font-weight:700;transition:.15s}
+.row.done .cb{background:var(--ok);border-color:var(--ok)}
+.cb::after{content:"✓";opacity:0}
+.row.done .cb::after{opacity:1}
+.row .nm{min-width:0}
+.row .nm b{display:block;font-weight:600;font-size:14.5px;line-height:1.3}
+.row.done .nm b{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--dim)}
+.row .nm small{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--dim);margin-top:2px}
+.row .val{font-size:14px;font-weight:700;color:var(--text);text-align:right;white-space:nowrap}
+.row .val small{display:block;font-size:11px;color:var(--dim);font-weight:400;line-height:1.1}
+.row .val.empty{color:var(--dim);font-weight:400}
+
+/* ქვედა ზოლი */
+.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(14,16,20,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom))}
+.bottom .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.prog{flex:1;min-width:0}
+.prog .t{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.prog .t b{color:var(--text)}
+.bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.bottom .btn{min-height:46px;padding:0 16px;font-size:14px}
+
+/* დასვენება */
+.rest{position:fixed;inset:0;z-index:40;background:rgba(10,12,16,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+.rest .lbl{color:var(--muted);font-size:14px}
+.rest .tm{font-size:72px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.rest .opts{display:flex;gap:8px;margin-top:6px}
+.rest .opts button{padding:9px 14px;border-radius:10px;background:var(--panel2);font-weight:600;font-size:14px}
+.rest .opts button.on{background:var(--panel);outline:2px solid var(--chest)}
+.rest .next{margin-top:8px;font-size:14px;color:var(--muted)}
+.rest .next b{color:var(--text)}
+
+/* პროგრესი */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.stat b{display:block;font-size:26px;font-weight:700;line-height:1.1}
+.stat small{color:var(--muted);font-size:12.5px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:10px}
+.card h3{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px}
+.cal{display:grid;grid-template-columns:repeat(14,1fr);gap:5px}
+.cal i{aspect-ratio:1;border-radius:5px;background:var(--panel2);display:block}
 .cal i.y{background:var(--ok)}
-footer{color:var(--muted);font-size:12.5px;margin-top:30px;text-align:center}
-footer a{color:var(--blue)}
-.danger{color:var(--muted);background:none;border:1px solid var(--line)}
-.ex .cue2{display:none;color:#d5dbe6;font-size:13px;margin-top:4px}
-.ex.on .cue2{display:block}
-@media (max-width:520px){.stats{grid-template-columns:repeat(2,1fr)}.ex{grid-template-columns:auto 1fr}.ex .rep{grid-column:2}.pinfo{padding:8px 12px}.pinfo .cue{display:none}.pinfo .t b{font-size:15px}}
+.cal i.t{outline:1px solid var(--dim)}
+.chart{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:16px}
+.chart div{flex:1;background:var(--chest);border-radius:4px 4px 2px 2px;position:relative;min-height:3px;opacity:.9}
+.chart div b{position:absolute;top:-17px;left:0;right:0;text-align:center;font-size:11px;font-weight:600}
+.chart div span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--dim)}
+.chart.empty{align-items:center;justify-content:center;color:var(--muted);font-size:14px;padding:0}
+.chart-wrap{padding-bottom:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top}
+td:last-child{text-align:right;white-space:nowrap;font-weight:700}
+td small{display:block;color:var(--dim);font-size:12px;font-weight:400}
+.hint{border-radius:var(--r);padding:12px 14px;margin-top:10px;font-size:14px;background:rgba(90,169,255,.1);border:1px solid rgba(90,169,255,.3)}
+.hint.up{background:rgba(56,210,127,.1);border-color:rgba(56,210,127,.35)}
+.reset{margin:26px auto 0;display:block;color:var(--dim);font-size:13px;text-decoration:underline}
+footer{color:var(--dim);font-size:12px;margin-top:26px;text-align:center;line-height:1.5}
+footer a{color:var(--muted)}
+.vprog footer{margin-top:20px}
+@media (min-width:600px){.video{max-height:none}.player .in{margin:0 var(--pad)}}
 </style>
 </head>
 <body>
-<header>
-  <h1>მკერდი <span>+</span> პრესი</h1>
-  <p class="sub">პუშ-აპების სრული პროგრამა · 3 დონე · აღჭურვილობის გარეშე · ATHLEAN-X-ის „Perfect Push-Up Workout“-ის მიხედვით</p>
+<div class="wrap">
+
+<header class="top">
+  <h1 class="brand">მკერდი <em>+</em> პრესი<small>პუშ-აპების პროგრამა · 3 დონე · აღჭურვილობის გარეშე</small></h1>
+  <nav class="seg" id="views" aria-label="ხედი">
+    <button data-v="w" class="on">ვარჯიში</button>
+    <button data-v="p">პროგრესი</button>
+  </nav>
 </header>
-<main>
 
-<div class="tabs" id="levels">
-  <button data-l="0">დამწყები</button>
-  <button data-l="1">საშუალო</button>
-  <button data-l="2">მოწინავე</button>
-</div>
-
-<div class="stats">
-  <div class="stat"><b id="sWork">0</b><small>ვარჯიში სულ</small></div>
-  <div class="stat"><b id="sStreak">0</b><small>დღე ზედიზედ</small></div>
-  <div class="stat"><b id="sWeek">0</b><small>ბოლო 7 დღეში</small></div>
-  <div class="stat"><b id="sReps">0</b><small>საუკეთესო წრე (გამეორება)</small></div>
-</div>
-
-<section class="player">
-  <div class="video">
-    <div id="yt"></div>
-    <div class="fallback" id="fb">ვიდეო იტვირთება… თუ არ ჩაირთო, <a href="https://www.youtube.com/watch?v=AhdtowFDKT0" target="_blank" rel="noopener" style="color:var(--blue);margin-left:4px">გახსენი YouTube-ზე</a></div>
+<!-- ============ ვარჯიში ============ -->
+<section id="vw">
+  <div class="seg wide" id="levels" aria-label="დონე">
+    <button data-l="0">დამწყები</button>
+    <button data-l="1">საშუალო</button>
+    <button data-l="2">მოწინავე</button>
   </div>
-  <div class="pinfo">
-    <div class="t"><b id="pName">—</b><small id="pEn"></small><p class="cue" id="pCue"></p></div>
-    <div class="pbtns">
-      <button class="sm" id="btnSound" title="ხმის ჩართვა/გამორთვა">🔇 ხმა</button>
-      <button class="sm" id="btnPrev" aria-label="წინა ვარჯიში">◀</button>
-      <button class="sm acc" id="btnNext">შემდეგი ▶</button>
+  <p class="lvlhint" id="lvlhint"></p>
+
+  <div class="player">
+    <div class="in">
+      <div class="video">
+        <div id="yt"></div>
+        <div class="fallback" id="fb">ვიდეო იტვირთება…</div>
+      </div>
+      <div class="pbar">
+        <span class="step" id="pStep">1 / 10</span>
+        <span class="nm" id="pName">—</span>
+        <button class="ib" id="btnSound" aria-label="ხმის ჩართვა">🔇</button>
+        <button class="ib" id="btnPrev" aria-label="წინა">‹</button>
+        <button class="ib" id="btnNext" aria-label="შემდეგი">›</button>
+      </div>
     </div>
   </div>
+
+  <section class="now" id="now"></section>
+
+  <details class="how" id="how">
+    <summary>როგორ მუშაობს პროგრამა</summary>
+    <ol>
+      <li><span></span><span><b>მკერდის ვარჯიში უკმარისობამდე.</b> გამეორებების რიცხვი წინასწარ არ არის. აკეთე, სანამ სწორი ტექნიკით შეგიძლია, და ჩაწერე, რამდენი გამოვიდა.</span></li>
+      <li><span></span><span><b>დასვენების ნაცვლად პრესი.</b> მკერდის ვარჯიშის შემდეგ პაუზა კი არა, პრესის ვარჯიშია. მერე ისევ მკერდი.</span></li>
+      <li><span></span><span><b>5 წყვილი = 1 წრე.</b> წრის შემდეგ 3–5 წუთი დასვენება და თავიდან. სულ 2–3 წრე.</span></li>
+      <li><span></span><span><b>⭐ ადუქცია და ექსპლოზიური</b> ყველაზე ეფექტური ფაზებია. თუ დრო არ არის, მაინც ეს ორი გააკეთე.</span></li>
+    </ol>
+  </details>
+
+  <div class="sect"><h3>სრული სია</h3><span id="listMeta"></span></div>
+  <div id="list"></div>
+
+  <footer>წყარო: <a href="https://learn.athleanx.com/articles/the-perfect-push-up-workout-3-levels" target="_blank" rel="noopener">ATHLEAN-X, The Perfect Push-Up Workout</a>. ვიდეო ATHLEAN-X-ის YouTube არხიდან. მონაცემები ინახება მხოლოდ ამ მოწყობილობის ბრაუზერში.</footer>
 </section>
 
-<details class="rules">
-  <summary>როგორ ვივარჯიშო (30 წამში წასაკითხი)</summary>
-  <ul>
-    <li><b>ყოველი მკერდის ვარჯიში — უკმარისობამდე.</b> გამეორებების რიცხვი წინასწარ არ არის: აკეთე, სანამ სწორი ტექნიკით მეტი ვერ გამოვა. ჩაწერე, რამდენი გამოვიდა.</li>
-    <li><b>დასვენების ნაცვლად — პრესი.</b> მკერდის ვარჯიშის შემდეგ პაუზას კი არ იღებ, არამედ პრესის ვარჯიშს აკეთებ (სტატიკა — რამდენ წამსაც გაუძლებ, V-აპი — უკმარისობამდე). შემდეგ ისევ მკერდი.</li>
-    <li><b>თანმიმდევრობა მნიშვნელოვანია:</b> ზედა მკერდი → შუა → ქვედა → ადუქცია (ხელის სხეულისკენ მოძრაობა) → ექსპლოზიური. ასე მკერდის ყველა ნაწილი მუშავდება.</li>
-    <li><b>5 მკერდის ვარჯიშის შემდეგ ერთი წრე დასრულებულია.</b> დაისვენე 3–5 წუთი და გაიმეორე კიდევ 1–2-ჯერ (სულ 2–3 წრე).</li>
-    <li><b>დონე:</b> დაიწყე იქიდან, სადაც ყველა ვარჯიშს ტექნიკურად სწორად ასრულებ. როცა თითო ვარჯიშში 15+ გამეორება გამოგდის — გადადი შემდეგზე. საიტი თვითონ გეტყვის, როცა დრო მოვა.</li>
-    <li><b>⭐ ნიშანი</b> — ყველაზე ეფექტური ვარჯიშები: ადუქციური (მკერდის სრული შეკუმშვისთვის) და ექსპლოზიური (სიმძლავრისთვის). თუ დროს ვერ იშოვნი, მაინც ეს ორი არ გამოტოვო.</li>
-  </ul>
-</details>
+<!-- ============ პროგრესი ============ -->
+<section id="vp" class="vprog hidden">
+  <div class="stats">
+    <div class="stat"><b id="sWork">0</b><small>ვარჯიში სულ</small></div>
+    <div class="stat"><b id="sStreak">0</b><small>დღე ზედიზედ</small></div>
+    <div class="stat"><b id="sWeek">0</b><small>ბოლო 7 დღეში</small></div>
+    <div class="stat"><b id="sReps">0</b><small>მაქს. გამეორება ერთ წრეზე</small></div>
+  </div>
+  <div class="hint hidden" id="levelHint"></div>
+  <div class="card"><h3>ბოლო 14 დღე</h3><div class="cal" id="cal"></div></div>
+  <div class="card chart-wrap"><h3>მკერდის გამეორებები ვარჯიშზე</h3><div class="chart" id="chart"></div></div>
+  <div class="card"><h3>რეკორდები</h3><table id="best"><tbody></tbody></table></div>
+  <button class="reset" id="btnReset">ყველა მონაცემის წაშლა</button>
+</section>
 
-<div class="round">
-  <div><b>წრე <span id="rNum">1</span> / 3</b><br><small id="rTxt" style="color:var(--muted)">შესრულებული: 0 / 10</small></div>
-  <div class="bar"><i id="rBar"></i></div>
-  <button class="sm acc" id="btnRound">წრე დასრულდა → დასვენება</button>
 </div>
 
-<div class="round hidden" id="restBox" style="flex-direction:column;align-items:stretch">
-  <div style="text-align:center;color:var(--muted);font-size:14px">დასვენება წრეებს შორის (3–5 წუთი)</div>
-  <div class="timer" id="tm">3:00</div>
-  <div class="pbtns" style="justify-content:center">
-    <button class="sm" data-t="180">3 წთ</button>
-    <button class="sm" data-t="240">4 წთ</button>
-    <button class="sm" data-t="300">5 წთ</button>
-    <button class="sm acc" id="btnSkip">გავაგრძელო ახლა</button>
+<!-- ქვედა ზოლი -->
+<div class="bottom" id="bottom">
+  <div class="in">
+    <div class="prog">
+      <div class="t"><span>წრე <b id="rNum">1</b> / 3</span><span><b id="rDone">0</b> / 10</span></div>
+      <div class="bar"><i id="rBar"></i></div>
+    </div>
+    <button class="btn ghost" id="btnSave">შენახვა</button>
+    <button class="btn pri" id="btnRound">წრე დასრულდა</button>
   </div>
 </div>
 
-<div id="phases"></div>
-
-<div class="round" id="finishBox">
-  <div><b>ვარჯიშის დასრულება</b><br><small style="color:var(--muted)">შეინახება დღევანდელი შედეგი და პროგრესი</small></div>
-  <button class="sm acc" id="btnFinish">✅ ვარჯიში დასრულდა</button>
+<!-- დასვენება -->
+<div class="rest hidden" id="rest">
+  <div class="lbl">დასვენება წრეებს შორის</div>
+  <div class="tm" id="tm">3:00</div>
+  <div class="opts">
+    <button data-t="180" class="on">3 წთ</button>
+    <button data-t="240">4 წთ</button>
+    <button data-t="300">5 წთ</button>
+  </div>
+  <div class="next">შემდეგი: <b id="restNext">წრე 2</b></div>
+  <button class="btn ok" id="btnSkip" style="margin-top:14px;min-width:200px">გაგრძელება ახლა</button>
 </div>
-
-<div class="hint hidden" id="levelHint"></div>
-
-<h2>პროგრესი</h2>
-<div style="color:var(--muted);font-size:13px;margin-bottom:4px">ბოლო 14 დღე</div>
-<div class="cal" id="cal"></div>
-<div style="color:var(--muted);font-size:13px;margin:14px 0 4px">მკერდის გამეორებები ვარჯიშზე (ბოლო 12 ვარჯიში)</div>
-<div class="chart" id="chart"></div>
-<div style="height:18px"></div>
-<table id="best"><thead><tr><th>ვარჯიში</th><th>დონე</th><th>რეკორდი</th></tr></thead><tbody></tbody></table>
-
-<div style="margin-top:28px;text-align:center"><button class="sm danger" id="btnReset">ყველა მონაცემის გასუფთავება</button></div>
-
-<footer>ვარჯიშების წყარო: <a href="https://learn.athleanx.com/articles/the-perfect-push-up-workout-3-levels" target="_blank" rel="noopener">ATHLEAN-X — The Perfect Push-Up Workout (3 Levels)</a>. ვიდეო — ATHLEAN-X-ის YouTube არხი. მონაცემები ინახება მხოლოდ შენს ბრაუზერში.</footer>
-</main>
 
 <script>
 const VID='AhdtowFDKT0';
 const LV=['დამწყები','საშუალო','მოწინავე'];
-// ვარჯიში: [ქართული სახელი, ინგლისური, რჩევა, ვიდეოს დაწყება წმ, დასრულება წმ, ერთეული, ⭐]
-const PH=[
- {n:'ზედა მკერდი', d:'ხელები ქვემოდან ზემოთ მოძრაობს', c:[
-   ['მუხლებზე „გაწევა“ (Knee Pushaway)','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.',158,174],
-   ['„პრაულერ“ პუშ-აპი (Prowler Push-Up)','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.',178,189],
-   ['დაქანებული პუშ-აპი (Decline Push-Up)','Decline Push-Up','ფეხები კედელზე ან სკამზე, ტანი დაქანებული. მკერდი ხელებამდე დაუშვი, ბოლომდე აიწიე.',190,205]
- ], a:[
-   ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწეული, ტანი უკან დახრილი, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.',245,258,'წმ'],
-   ['V-სიტ „მაკრატელი“ სტატიკა','V-Sit Scissor Hold','V-სიტ პოზიცია + ფეხების ჯვარედინი მოძრაობა ზემოთ-ქვემოთ. ტანი არ იძვრის.',263,277,'წმ'],
-   ['„მაკრატელი“ V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწევ ტანს და ფეხებს, ფეხები „მაკრატელით“. ქვემოთ — ნელა.',277,284,'გამ.']
- ]},
- {n:'შუა მკერდი', d:'ხელები მკერდის დონეზე, იდაყვები ტანთან ახლოს', c:[
-   ['პუშ-აპი მუხლებზე (Kneeling Push-Up)','Kneeling Push-Up','მუხლებზე, ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ — მკლავები ბოლომდე.',290,300],
-   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.',300,318],
-   ['„მშვილდოსნის“ პუშ-აპი (Archer Push-Up)','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.',320,334]
- ], a:'same'},
- {n:'ქვედა მკერდი', d:'ხელები ზემოდან ქვემოთ მოძრაობს — დიპსების მსგავსად', c:[
-   ['ინკლაინ პუშ-აპი (ხელები ამაღლებულ ზედაპირზე)','Incline Push-Up','ხელები სკამზე/მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.',375,390],
-   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ დაწეული, თითები გვერდზე/უკან. ტანი წინ გადახრილი — მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.',394,409],
-   ['მოდიფიცირებული „ინდური“ პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა, თავი ხელებს შორის ქვემოთ „ჩაყვინთე“ და წინ-ზემოთ გაცურდი. აქცენტი — წინ გადასვლაზე.',414,430]
- ], a:'same'},
- {n:'ადუქცია ⭐', d:'მკერდის სრული შეკუმშვისთვის ხელი სხეულისკენ უნდა მოძრაობდეს', c:[
-   ['პუშ-აპი მუხლებზე მობრუნებით','Twisting Kneeling Push-Up','მუხლებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე — ის ხელი მკერდის ქვეშ „გადადის“. მხარეები მონაცვლეობით.',488,496,'',1],
-   ['პუშ-აპი მობრუნებით (Twisting Push-Up)','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.',503,519,'',1],
-   ['რეზინით ჯვარედინი პუშ-აპი (Banded Crossover)','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.',520,540,'',1]
- ], a:'same'},
- {n:'ექსპლოზიური ⭐', d:'რაც ნელა ხდება, სწრაფადაც უნდა შესრულდეს — სიმძლავრისთვის', c:[
-   ['პლიო პუშ-აპი მუხლებზე გვერდულად','Lateral Knee Plyo Push-Up','მუხლებზე. ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.',553,569,'',1],
-   ['პუშ-აპი ორივე ხელის მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე (ინერცია ქრება), დააბრუნე და ძლიერად აისროლე ზემოთ.',573,584,'',1],
-   ['„ბროკის შაფლი“ პუშ-აპი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად „შაფლით“ გადაადგილდება. ატლეტური და მძიმე.',613,627,'',1]
- ], a:'same'}
+const LVH=['ვარიანტები მუხლებზე. თუ 10 სტანდარტულ პუშ-აპს ჯერ ვერ აკეთებ, აქ დაიწყე.',
+           'ფეხის თითებზე. 10–20 სუფთა პუშ-აპი გამოგდის.',
+           '20+ პუშ-აპი გამოგდის და ცალ ხელზე დატვირთვა არ გაშინებს.'];
+// [სახელი, ინგლისური, რჩევა, ვიდეო დაწყება, ვიდეო დასრულება, ერთეული]
+const ABS=[
+ ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.',245,258,'წმ'],
+ ['V-სიტ მაკრატელი','V-Sit Scissor Hold','V-სიტ პოზიციაში ფეხები ჯვარედინად ამოძრავე ზემოთ-ქვემოთ. ტანი უძრავია.',263,277,'წმ'],
+ ['მაკრატელი V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწიე ტანი და ფეხები, ფეხები მაკრატელით. დაშვება ნელა.',277,284,'გამ.']
 ];
-PH.forEach(p=>{if(p.a==='same')p.a=PH[0].a;});
+const PH=[
+ {n:'ზედა მკერდი', d:'ხელები ქვემოდან ზემოთ', c:[
+   ['უკან გაწევა მუხლებზე','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ იატაკზე. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.',158,174],
+   ['პრაულერ პუშ-აპი','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.',178,189],
+   ['დაქანებული პუშ-აპი','Decline Push-Up','ფეხები კედელზე ან სკამზე. მკერდი ხელებამდე დაუშვი და ბოლომდე აიწიე.',190,205]]},
+ {n:'შუა მკერდი', d:'ხელები მკერდის დონეზე', c:[
+   ['პუშ-აპი მუხლებზე','Kneeling Push-Up','ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ მკლავები ბოლომდე გაშალე.',290,300],
+   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.',300,318],
+   ['მშვილდოსნის პუშ-აპი','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.',320,334]]},
+ {n:'ქვედა მკერდი', d:'ხელები ზემოდან ქვემოთ, დიპსების მსგავსად', c:[
+   ['პუშ-აპი ამაღლებულ ზედაპირზე','Incline Push-Up','ხელები სკამზე ან მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.',375,390],
+   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ, თითები გვერდზე ან უკან. ტანი წინ გადახრილი, მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.',394,409],
+   ['მოდიფიცირებული ინდური პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა. თავი ხელებს შორის ქვემოთ ჩაყვინთე და წინ-ზემოთ გაცურდი. აქცენტი წინ გადასვლაზეა.',414,430]]},
+ {n:'ადუქცია', d:'ხელი სხეულისკენ მოძრაობს', star:1, c:[
+   ['მობრუნებით პუშ-აპი მუხლებზე','Twisting Kneeling Push-Up','აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ ის ხელი მკერდის ქვეშ გადავიდეს. მხარეები მონაცვლეობით.',488,496],
+   ['მობრუნებით პუშ-აპი','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.',503,519],
+   ['ჯვარედინი პუშ-აპი რეზინით','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.',520,540]]},
+ {n:'ექსპლოზიური', d:'სწრაფად და ძლიერად', star:1, c:[
+   ['პლიო პუშ-აპი მუხლებზე','Lateral Knee Plyo Push-Up','ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.',553,569],
+   ['პუშ-აპი ხელების მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე, დააბრუნე და ძლიერად აისროლე ზემოთ.',573,584],
+   ['ბროკის შაფლი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად შაფლით გადაადგილდება. ატლეტური და მძიმე.',613,627]]}
+];
 
 const K='pushup-ka-v1';
 let S=JSON.parse(localStorage.getItem(K)||'{}');
 S.level??=0; S.history??=[]; S.today??={round:1,done:{},reps:{}}; S.sound??=false;
 const save=()=>localStorage.setItem(K,JSON.stringify(S));
 const $=s=>document.querySelector(s);
-
-// სია: 10 ელემენტი — 5 ფაზა × (მკერდი, პრესი)
-const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest'},{id:`a${i}`,ph:p,e:p.a[S.level],kind:'abs'}]);
+const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest'},{id:`a${i}`,ph:p,e:ABS[S.level],kind:'abs'}]);
+const doneN=()=>Object.values(S.today.done).filter(Boolean).length;
+const unit=it=>it.e[5]||'გამ.';
 let cur=0;
 
 function render(){
   document.querySelectorAll('#levels button').forEach(b=>b.classList.toggle('on',+b.dataset.l===S.level));
-  const list=items(); let h='';
-  PH.forEach((p,i)=>{
-    h+=`<div class="phase"><h3><em>${i+1}. ${p.n}</em><span>${p.d}</span></h3>`;
-    [list[i*2],list[i*2+1]].forEach((it,j)=>{
-      const idx=i*2+j,done=!!S.today.done[it.id],unit=it.e[5]||'გამ.';
-      h+=`<div class="ex ${idx===cur?'on':''} ${done?'done':''}" data-i="${idx}">
-        <input type="checkbox" ${done?'checked':''} aria-label="შესრულებულია">
-        <div><div class="n">${it.e[0]}<span class="tag ${it.kind}">${it.kind==='chest'?'მკერდი':'პრესი'}</span>${it.e[6]?'<span class="tag star">⭐ ეფექტური</span>':''}</div><small>${it.kind==='chest'?'უკმარისობამდე':'დასვენების ნაცვლად — '+(unit==='წმ'?'რამდენ წამსაც გაუძლებ':'უკმარისობამდე')}</small><small class="cue2">${it.e[2]}</small></div>
-        <div class="rep"><input type="number" min="0" inputmode="numeric" placeholder="0" value="${S.today.reps[it.id]??''}" aria-label="შედეგი"><span>${unit}</span></div></div>`;
-    });
-    h+='</div>';
-  });
-  $('#phases').innerHTML=h;
-  const n=Object.values(S.today.done).filter(Boolean).length;
-  $('#rNum').textContent=S.today.round; $('#rTxt').textContent=`შესრულებული: ${n} / 10`; $('#rBar').style.width=n*10+'%';
-  showCur(); renderStats();
+  $('#lvlhint').textContent=LVH[S.level];
+  $('#how').open=!S.history.length;
+  const list=items();
+  // სია
+  $('#list').innerHTML=PH.map((p,i)=>`<div class="ph"><div class="phh"><b>${i+1}. ${p.n}</b><small>${p.d}</small>${p.star?'<span class="star">⭐ ეფექტური</span>':''}</div>`+
+    [list[i*2],list[i*2+1]].map((it,j)=>{const idx=i*2+j,d=!!S.today.done[it.id],v=S.today.reps[it.id];
+      return `<div class="row ${it.kind} ${idx===cur?'on':''} ${d?'done':''}" data-i="${idx}" role="button" tabindex="0" aria-pressed="${d}">
+        <span class="cb"></span>
+        <span class="nm"><b>${it.e[0]}</b><small><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · ${it.e[1]}</small></span>
+        <span class="val ${v?'':'empty'}">${v?`${v}<small>${unit(it)}</small>`:'—'}</span></div>`;}).join('')+'</div>').join('');
+  $('#listMeta').textContent=`წრე ${S.today.round} · ${doneN()} / 10 შესრულებული`;
+  // ქვედა ზოლი
+  const n=doneN(),last=S.today.round>=3;
+  $('#rNum').textContent=S.today.round; $('#rDone').textContent=n; $('#rBar').style.width=n*10+'%';
+  $('#btnRound').textContent=last?'ვარჯიშის შენახვა':'წრე დასრულდა';
+  $('#btnRound').disabled=n===0&&!(S.today.roundReps);
+  $('#btnSave').classList.toggle('hidden',last||(n===0&&!S.today.roundReps));
+  showCur(); renderNow(); renderStats();
 }
-function showCur(){
-  const it=items()[cur]; if(!it)return;
-  $('#pName').textContent=it.e[0]; $('#pEn').textContent=`${it.e[1]} · ${LV[S.level]} · ${it.ph.n.replace(' ⭐','')}`; $('#pCue').textContent=it.e[2];
-  document.querySelectorAll('.ex').forEach(el=>el.classList.toggle('on',+el.dataset.i===cur));
-  play(it.e[3],it.e[4]);
-}
-function setCur(i){cur=(i+10)%10;showCur();}
-function nextUndone(from){for(let k=1;k<=10;k++){const i=(from+k)%10;if(!S.today.done[items()[i].id])return i;}return (from+1)%10;}
-
-// ---- YouTube: ავტომატური ჩართვა, ხმის გარეშე, მონაკვეთის გამეორება ----
-let P,ready=false,clip=[158,174];
-function play(a,b){clip=[a,b];if(!ready)return;P.loadVideoById({videoId:VID,startSeconds:a,endSeconds:b});S.sound?P.unMute():P.mute();}
-window.onYouTubeIframeAPIReady=()=>{
-  P=new YT.Player('yt',{videoId:VID,playerVars:{autoplay:1,mute:1,controls:0,rel:0,playsinline:1,modestbranding:1,start:clip[0],end:clip[1],origin:location.origin},
-   events:{onReady:()=>{ready=true;$('#fb').classList.add('hidden');P.mute();play(clip[0],clip[1]);}}});
-  // მონაკვეთის ბოლოს (ან თუ პლეერი გაჩერდა) — თავიდან, GIF-ის მსგავსად
-  setInterval(()=>{if(!ready)return;const st=P.getPlayerState(),t=P.getCurrentTime();
-    if(st===0||t>=clip[1]-.3)P.seekTo(clip[0],true);
-    if(st!==1&&st!==3)P.playVideo();},400);   // 1=უკრავს, 3=იტვირთება; სხვა შემთხვევაში ისევ ჩართე
-};
-// მობილურზე პირველი შეხება ხსნის ავტომატურ დაკვრას
-document.addEventListener('pointerdown',()=>{if(ready&&P.getPlayerState()!==1)P.playVideo();},{passive:true});
-const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
-setTimeout(()=>{if(!ready)$('#fb').innerHTML='ვიდეო ვერ ჩაირთო (YouTube მიუწვდომელია). <a href="https://youtu.be/'+VID+'?t='+clip[0]+'" target="_blank" rel="noopener" style="color:var(--blue);margin-left:4px">გახსენი YouTube-ზე</a>';},8000);
-
-$('#btnSound').onclick=()=>{S.sound=!S.sound;save();$('#btnSound').textContent=S.sound?'🔊 ხმა':'🔇 ხმა';if(ready){S.sound?P.unMute():P.mute();}};
-$('#btnSound').textContent=S.sound?'🔊 ხმა':'🔇 ხმა';
-$('#btnNext').onclick=()=>setCur(cur+1); $('#btnPrev').onclick=()=>setCur(cur-1);
-
-// ---- ჩეკლისტი ----
-$('#phases').addEventListener('click',e=>{
-  const row=e.target.closest('.ex'); if(!row)return; const i=+row.dataset.i, it=items()[i];
-  if(e.target.matches('input[type=number]'))return;
-  if(e.target.matches('input[type=checkbox]')){
-    S.today.done[it.id]=e.target.checked; save(); render();
-    if(e.target.checked) setCur(nextUndone(i));   // შემდეგი ვარჯიშის ვიდეო ავტომატურად ჩაირთვება
+function renderNow(){
+  const it=items()[cur],d=!!S.today.done[it.id],v=S.today.reps[it.id];
+  if(doneN()>=10){
+    const last=S.today.round>=3;
+    $('#now').innerHTML=`<div class="donebox"><b>წრე ${S.today.round} შესრულებულია 💪</b><p>${last?'სამივე წრე გავლილია. შეინახე დღევანდელი ვარჯიში.':'დაისვენე 3–5 წუთი და დაიწყე შემდეგი წრე.'}</p>
+      <button class="btn ${last?'ok':'pri'}" style="margin-top:12px;min-width:220px" onclick="$('#btnRound').click()">${last?'ვარჯიშის შენახვა':'დასვენება და შემდეგი წრე'}</button></div>`;
     return;
   }
-  setCur(i);
-});
-$('#phases').addEventListener('input',e=>{
-  if(!e.target.matches('input[type=number]'))return;
-  const it=items()[+e.target.closest('.ex').dataset.i]; S.today.reps[it.id]=+e.target.value||0; save();
-});
-document.querySelectorAll('#levels button').forEach(b=>b.onclick=()=>{S.level=+b.dataset.l;save();cur=0;render();});
-
-// ---- წრეები და დასვენების ტაიმერი ----
-let tInt=null,tLeft=180;
-function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
-function startTimer(sec){clearInterval(tInt);tLeft=sec;$('#tm').textContent=fmt(tLeft);tInt=setInterval(()=>{tLeft--;$('#tm').textContent=fmt(tLeft);if(tLeft<=0){clearInterval(tInt);beep();nextRound();}},1000);}
-function beep(){try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(c.currentTime+.6);}catch(e){}}
-function nextRound(){
-  $('#restBox').classList.add('hidden');
-  // შედეგები წრეების ჯამში ინახება; ჩეკები ნულდება
-  S.today.roundReps=S.today.roundReps||{}; for(const k in S.today.reps)S.today.roundReps[k]=(S.today.roundReps[k]||0)+S.today.reps[k];
-  S.today.reps={}; S.today.done={}; S.today.round=Math.min(S.today.round+1,3); save(); cur=0; render();
+  $('#now').innerHTML=`<div class="eyebrow"><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · ${it.ph.n} · ${it.kind==='chest'?'უკმარისობამდე':(unit(it)==='წმ'?'რამდენ წამსაც გაუძლებ':'უკმარისობამდე')}</div>
+    <h2>${it.e[0]}</h2><div class="en">${it.e[1]} · ${LV[S.level]}</div>
+    <p class="cue">${it.e[2]}</p>
+    <div class="act">
+      <div class="res"><label>შედეგი</label><input id="repIn" type="number" min="0" inputmode="numeric" placeholder="0" value="${v??''}" aria-label="შედეგი"><span>${unit(it)}</span></div>
+      <button class="btn ${d?'ghost':'ok'}" id="btnDone">${d?'გაუქმება':'შესრულდა ✓'}</button>
+    </div>`;
+  $('#repIn').oninput=e=>{S.today.reps[it.id]=+e.target.value||0;save();syncRow(it);};
+  $('#btnDone').onclick=()=>{S.today.done[it.id]=!d;save();
+    if(!d){const nx=nextUndone(cur);render();if(doneN()<10)setCur(nx);}else render();};
 }
-$('#btnRound').onclick=()=>{ if(S.today.round>=3){alert('3 წრე შესრულებულია — დააჭირე „ვარჯიში დასრულდა“.');return;} $('#restBox').classList.remove('hidden');startTimer(180);$('#restBox').scrollIntoView({behavior:'smooth',block:'center'}); };
-document.querySelectorAll('#restBox [data-t]').forEach(b=>b.onclick=()=>startTimer(+b.dataset.t));
-$('#btnSkip').onclick=()=>{clearInterval(tInt);nextRound();};
+function syncRow(it){const r=document.querySelector(`.row[data-i="${cur}"] .val`),v=S.today.reps[it.id];
+  if(r){r.className='val'+(v?'':' empty');r.innerHTML=v?`${v}<small>${unit(it)}</small>`:'—';}}
+function showCur(){
+  const it=items()[cur];
+  $('#pName').textContent=it.e[0]; $('#pStep').textContent=`${cur+1} / 10`;
+  document.querySelectorAll('.row').forEach(el=>el.classList.toggle('on',+el.dataset.i===cur));
+  play(it.e[3],it.e[4]);
+}
+function setCur(i){cur=(i+10)%10;showCur();renderNow();}
+function nextUndone(from){for(let k=1;k<=10;k++){const i=(from+k)%10;if(!S.today.done[items()[i].id])return i;}return (from+1)%10;}
 
-// ---- ვარჯიშის დასრულება და ისტორია ----
-$('#btnFinish').onclick=()=>{
+// ---- YouTube: ავტომატური ჩართვა უხმოდ, მონაკვეთის გამეორება ----
+let P,ready=false,clip=[158,174];
+function play(a,b){if(clip[0]===a&&clip[1]===b&&ready)return;clip=[a,b];if(!ready)return;P.loadVideoById({videoId:VID,startSeconds:a,endSeconds:b});S.sound?P.unMute():P.mute();}
+window.onYouTubeIframeAPIReady=()=>{
+  P=new YT.Player('yt',{videoId:VID,playerVars:{autoplay:1,mute:1,controls:0,rel:0,playsinline:1,modestbranding:1,start:clip[0],end:clip[1],origin:location.origin},
+   events:{onReady:()=>{ready=true;$('#fb').classList.add('hidden');P.mute();P.loadVideoById({videoId:VID,startSeconds:clip[0],endSeconds:clip[1]});}}});
+  setInterval(()=>{if(!ready)return;const st=P.getPlayerState(),t=P.getCurrentTime();
+    if(st===0||t>=clip[1]-.3)P.seekTo(clip[0],true);
+    if(st!==1&&st!==3)P.playVideo();},400);
+};
+const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
+setTimeout(()=>{if(!ready)$('#fb').innerHTML='ვიდეო ვერ ჩაირთო. <a href="https://youtu.be/'+VID+'?t='+clip[0]+'" target="_blank" rel="noopener">გახსენი YouTube-ზე</a>';},8000);
+document.addEventListener('pointerdown',()=>{if(ready&&P.getPlayerState()!==1)P.playVideo();},{passive:true});
+const soundUI=()=>{$('#btnSound').textContent=S.sound?'🔊':'🔇';$('#btnSound').setAttribute('aria-label',S.sound?'ხმის გამორთვა':'ხმის ჩართვა');};
+$('#btnSound').onclick=()=>{S.sound=!S.sound;save();soundUI();if(ready){S.sound?P.unMute():P.mute();}};soundUI();
+$('#btnNext').onclick=()=>setCur(cur+1); $('#btnPrev').onclick=()=>setCur(cur-1);
+
+// ---- სია: შეხება = არჩევა, ჩეკბოქსზე შეხება = შესრულდა ----
+$('#list').addEventListener('click',e=>{
+  const row=e.target.closest('.row'); if(!row)return; const i=+row.dataset.i,it=items()[i];
+  if(e.target.closest('.cb')){S.today.done[it.id]=!S.today.done[it.id];save();render();if(S.today.done[it.id]&&doneN()<10)setCur(nextUndone(i));return;}
+  setCur(i); $('#now').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+$('#list').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const r=e.target.closest('.row');if(r){e.preventDefault();setCur(+r.dataset.i);}}});
+document.querySelectorAll('#levels button').forEach(b=>b.onclick=()=>{S.level=+b.dataset.l;save();cur=0;render();});
+document.querySelectorAll('#views button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#views button').forEach(x=>x.classList.toggle('on',x===b));
+  const p=b.dataset.v==='p'; $('#vw').classList.toggle('hidden',p); $('#vp').classList.toggle('hidden',!p); $('#bottom').classList.toggle('hidden',p); scrollTo(0,0);
+});
+
+// ---- წრეები, დასვენება, შენახვა ----
+let tInt=null,tLeft=180;
+const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function startTimer(sec){clearInterval(tInt);tLeft=sec;$('#tm').textContent=fmt(tLeft);
+  document.querySelectorAll('#rest .opts button').forEach(b=>b.classList.toggle('on',+b.dataset.t===sec));
+  tInt=setInterval(()=>{tLeft--;$('#tm').textContent=fmt(tLeft);if(tLeft<=0){clearInterval(tInt);beep();nextRound();}},1000);}
+function beep(){try{const c=new AudioContext(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.2;o.start();o.stop(c.currentTime+.6);}catch(e){}}
+function foldRound(){S.today.roundReps=S.today.roundReps||{};for(const k in S.today.reps)S.today.roundReps[k]=(S.today.roundReps[k]||0)+S.today.reps[k];S.today.reps={};S.today.done={};}
+function nextRound(){$('#rest').classList.add('hidden');foldRound();S.today.round++;save();cur=0;render();scrollTo(0,0);}
+function finish(){
   const reps={...(S.today.roundReps||{})}; for(const k in S.today.reps)reps[k]=(reps[k]||0)+S.today.reps[k];
   const chest=Object.entries(reps).filter(([k])=>k[0]==='c').reduce((a,[,v])=>a+v,0);
-  if(!chest&&!Object.values(S.today.done).some(Boolean)){alert('ჯერ არაფერი შეასრულებულია — მონიშნე ვარჯიშები ან ჩაწერე გამეორებები.');return;}
-  const full=Object.values(S.today.done).filter(Boolean).length>=10;
-  const rounds=Math.max(1,S.today.round-(full?0:1));
+  const rounds=Math.max(1,S.today.round-(doneN()>=10?0:1));
   S.history.push({d:new Date().toISOString().slice(0,10),l:S.level,r:rounds,chest,reps});
-  S.today={round:1,done:{},reps:{}}; save(); cur=0; render();
-  $('#levelHint').scrollIntoView({behavior:'smooth',block:'center'});
-};
-
-function renderStats(){
-  const H=S.history, days=[...new Set(H.map(h=>h.d))].sort();
-  $('#sWork').textContent=H.length;
-  // ზედიზედ დღეები (დღეს ან გუშინ დაწყებული)
-  let streak=0,d=new Date(); const iso=x=>x.toISOString().slice(0,10);
-  if(!days.includes(iso(d)))d.setDate(d.getDate()-1);
-  while(days.includes(iso(d))){streak++;d.setDate(d.getDate()-1);}
-  $('#sStreak').textContent=streak;
-  const wk=new Date();wk.setDate(wk.getDate()-6);
-  $('#sWeek').textContent=H.filter(h=>h.d>=iso(wk)).length;
-  $('#sReps').textContent=Math.max(0,...H.map(h=>Math.round(h.chest/(h.r||1))));
-  // კალენდარი — ბოლო 14 დღე
-  let c='';for(let i=13;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);c+=`<i class="${days.includes(iso(x))?'y':''}" title="${iso(x)}"></i>`;}
-  $('#cal').innerHTML=c;
-  // დიაგრამა
-  const last=H.slice(-12), mx=Math.max(1,...last.map(h=>h.chest)), ch=$('#chart');
-  ch.classList.toggle('empty',!last.length);
-  ch.innerHTML=last.length?last.map(h=>`<div style="height:${Math.max(3,h.chest/mx*100)}%" title="${h.d} · ${LV[h.l]} · ${h.r} წრე"><b>${h.chest}</b><span>${h.d.slice(5)}</span></div>`).join(''):'ჯერ არ არის შენახული ვარჯიში — დაასრულე პირველი და აქ გამოჩნდება.';
-  // რეკორდები თითო ვარჯიშზე (ერთ ვარჯიშში ჯამურად)
-  const best={};H.forEach(h=>{for(const k in h.reps){const key=k+'|'+h.l;best[key]=Math.max(best[key]||0,h.reps[k]);}});
-  const rows=Object.entries(best).filter(([,v])=>v>0).sort().map(([key,v])=>{const [id,l]=key.split('|');const i=+id.slice(1);const e=(id[0]==='c'?PH[i].c:PH[i].a)[+l];return `<tr><td>${e[0]}</td><td>${LV[+l]}</td><td><b>${v}</b> ${e[5]||'გამ.'}</td></tr>`;});
-  $('#best tbody').innerHTML=rows.join('')||'<tr><td colspan="3" style="color:var(--muted)">რეკორდები გამოჩნდება პირველი ვარჯიშის შემდეგ</td></tr>';
-  // დონის რჩევა: ბოლო 3 ვარჯიშში ამ დონეზე მკერდის საშუალო ≥15 გამ./ვარჯიშზე/წრეზე → შემდეგი დონე
-  const mine=H.filter(h=>h.l===S.level).slice(-3), hint=$('#levelHint');
-  if(mine.length>=3&&S.level<2){const avg=mine.reduce((a,h)=>a+h.chest/(h.r||1)/5,0)/mine.length;
-    if(avg>=15){hint.className='hint ok';hint.innerHTML=`💪 ბოლო 3 ვარჯიშში საშუალოდ <b>${Math.round(avg)}</b> გამეორება გამოგდის თითო მკერდის ვარჯიშზე — დროა გადახვიდე დონეზე „<b>${LV[S.level+1]}</b>“.`;return;}}
-  if(H.length){const l=H[H.length-1];hint.className='hint';hint.innerHTML=`✅ ბოლო ვარჯიში: ${l.d} · ${LV[l.l]} · ${l.r} წრე · ${l.chest} გამეორება მკერდზე. გააგრძელე ასე — მიზანი კვირაში 2–3 ვარჯიშია.`;}
-  else hint.className='hint hidden';
+  S.today={round:1,done:{},reps:{}}; save(); cur=0; render(); $('#views button[data-v="p"]').click();
 }
+$('#btnRound').onclick=()=>{ if(S.today.round>=3){finish();return;} $('#restNext').textContent=`წრე ${S.today.round+1}`; $('#rest').classList.remove('hidden'); startTimer(180); };
+$('#btnSave').onclick=()=>{if(confirm('შევინახო დღევანდელი ვარჯიში და დავასრულო?'))finish();};
+document.querySelectorAll('#rest .opts button').forEach(b=>b.onclick=()=>startTimer(+b.dataset.t));
+$('#btnSkip').onclick=()=>{clearInterval(tInt);nextRound();};
 
-$('#btnReset').onclick=()=>{if(confirm('ნამდვილად გსურს ყველა შენახული პროგრესის წაშლა?')){localStorage.removeItem(K);location.reload();}};
+// ---- პროგრესი ----
+function renderStats(){
+  const H=S.history, iso=x=>x.toISOString().slice(0,10), days=new Set(H.map(h=>h.d));
+  $('#sWork').textContent=H.length;
+  let streak=0,d=new Date(); if(!days.has(iso(d)))d.setDate(d.getDate()-1);
+  while(days.has(iso(d))){streak++;d.setDate(d.getDate()-1);}
+  $('#sStreak').textContent=streak;
+  const wk=new Date();wk.setDate(wk.getDate()-6); $('#sWeek').textContent=H.filter(h=>h.d>=iso(wk)).length;
+  $('#sReps').textContent=Math.max(0,...H.map(h=>Math.round(h.chest/(h.r||1))));
+  let c='';for(let i=13;i>=0;i--){const x=new Date();x.setDate(x.getDate()-i);c+=`<i class="${days.has(iso(x))?'y':''} ${i===0?'t':''}" title="${iso(x)}"></i>`;} $('#cal').innerHTML=c;
+  const last=H.slice(-12),mx=Math.max(1,...last.map(h=>h.chest)),ch=$('#chart');
+  ch.classList.toggle('empty',!last.length);
+  ch.innerHTML=last.length?last.map(h=>`<div style="height:${Math.max(3,h.chest/mx*100)}%" title="${h.d} · ${LV[h.l]} · ${h.r} წრე"><b>${h.chest}</b><span>${h.d.slice(5).replace('-','.')}</span></div>`).join(''):'პირველი შენახული ვარჯიშის შემდეგ აქ დიაგრამა გამოჩნდება.';
+  const best={};H.forEach(h=>{for(const k in h.reps){const key=k+'|'+h.l;best[key]=Math.max(best[key]||0,h.reps[k]);}});
+  const rows=Object.entries(best).filter(([,v])=>v>0).sort().map(([key,v])=>{const [id,l]=key.split('|'),i=+id.slice(1),e=(id[0]==='c'?PH[i].c:ABS)[+l];return `<tr><td>${e[0]}<small>${LV[+l]}</small></td><td>${v} ${e[5]||'გამ.'}</td></tr>`;});
+  $('#best tbody').innerHTML=rows.join('')||'<tr><td style="color:var(--dim)">რეკორდები პირველი ვარჯიშის შემდეგ გამოჩნდება</td></tr>';
+  const mine=H.filter(h=>h.l===S.level).slice(-3),hint=$('#levelHint');
+  hint.className='hint hidden';
+  if(mine.length>=3&&S.level<2){const avg=mine.reduce((a,h)=>a+h.chest/(h.r||1)/5,0)/mine.length;
+    if(avg>=15){hint.className='hint up';hint.innerHTML=`💪 ბოლო 3 ვარჯიშში საშუალოდ <b>${Math.round(avg)}</b> გამეორება გამოგდის თითო მკერდის ვარჯიშზე. დროა გადახვიდე დონეზე „${LV[S.level+1]}“.`;return;}}
+  if(H.length){const l=H[H.length-1];hint.className='hint';hint.textContent=`ბოლო ვარჯიში: ${l.d} · ${LV[l.l]} · ${l.r} წრე · ${l.chest} გამეორება მკერდზე. მიზანი კვირაში 2–3 ვარჯიშია.`;}
+}
+$('#btnReset').onclick=()=>{if(confirm('ნამდვილად წავშალო ყველა შენახული პროგრესი?')){localStorage.removeItem(K);location.reload();}};
 render();
 </script>
 </body>
