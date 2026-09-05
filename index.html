@@ -189,7 +189,7 @@ footer a{color:var(--muted)}
         <div class="fallback" id="fb">კლიპი იტვირთება…</div>
       </div>
       <div class="pbar">
-        <span class="step" id="pStep">1 / 10</span>
+        <span class="step" id="pStep">1 / 7</span>
         <span class="nm" id="pName">—</span>
         <button class="ib" id="btnPrev" aria-label="წინა">‹</button>
         <button class="ib" id="btnNext" aria-label="შემდეგი">›</button>
@@ -217,6 +217,7 @@ footer a{color:var(--muted)}
   <div class="hint hidden" id="levelHint"></div>
   <div class="card"><h3>ბოლო 14 დღე</h3><div class="cal" id="cal"></div></div>
   <div class="card chart-wrap"><h3>მკერდის გამეორებები ვარჯიშზე</h3><div class="chart" id="chart"></div></div>
+  <div class="card"><h3>ისტორია</h3><table id="hist"><tbody></tbody></table></div>
   <div class="card"><h3>რეკორდები</h3><table id="best"><tbody></tbody></table></div>
   <button class="reset" id="btnReset">ყველა მონაცემის წაშლა</button>
 </section>
@@ -227,11 +228,11 @@ footer a{color:var(--muted)}
 <div class="bottom" id="bottom">
   <div class="in">
     <div class="prog">
-      <div class="t"><span>წრე <b id="rNum">1</b> / 3</span><span><b id="rDone">0</b> / 10</span></div>
+      <div class="t"><span>წრე <b id="rNum">1</b> / 3</span><span><b id="rDone">0</b> / <span id="rTot">7</span></span></div>
       <div class="bar"><i id="rBar"></i></div>
     </div>
-    <button class="btn ghost" id="btnSave">შენახვა</button>
-    <button class="btn pri" id="btnRound">წრე დასრულდა</button>
+    <button class="btn ghost" id="btnNextRound">წრე 2 ›</button>
+    <button class="btn pri" id="btnFinish">ვარჯიშის დასრულება</button>
   </div>
 </div>
 
@@ -288,8 +289,12 @@ const K='pushup-ka-v1';
 let S=JSON.parse(localStorage.getItem(K)||'{}');
 S.level??=0; S.history??=[]; S.today??={round:1,done:{},reps:{}};
 const save=()=>localStorage.setItem(K,JSON.stringify(S));
+const localISO=(x=new Date())=>new Date(x.getTime()-x.getTimezoneOffset()*60000).toISOString();
+S.history.forEach(h=>{h.t??='—';});
 const $=s=>document.querySelector(s);
-const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest'},{id:`a${i}`,ph:p,e:ABS[S.level],kind:'abs'}]);
+const ABS_AFTER=[1,3]; // პრესი მკერდის მე-2 და მე-4 ვარჯიშის შემდეგ
+const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest',ph_i:i},...(ABS_AFTER.includes(i)?[{id:`a${i}`,ph:p,e:ABS[S.level],kind:'abs',ph_i:i}]:[])]);
+const N=()=>items().length;
 const doneN=()=>Object.values(S.today.done).filter(Boolean).length;
 const unit=it=>it.e[4]||'გამ.';
 const ms=it=>it.e[5]||0;
@@ -302,26 +307,27 @@ function render(){
   const list=items();
   // სია
   $('#list').innerHTML=PH.map((p,i)=>`<div class="ph"><div class="phh"><b>${i+1}. ${p.n}</b><small>${p.d}</small>${p.star?'<span class="star">⭐ ეფექტური</span>':''}</div>`+
-    [list[i*2],list[i*2+1]].map((it,j)=>{const idx=i*2+j,d=!!S.today.done[it.id],v=S.today.reps[it.id];
+    list.map((it,idx)=>[it,idx]).filter(([it])=>it.ph_i===i).map(([it,idx])=>{const d=!!S.today.done[it.id],v=S.today.reps[it.id];
       return `<div class="row ${it.kind} ${idx===cur?'on':''} ${d?'done':''}" data-i="${idx}" role="button" tabindex="0" aria-pressed="${d}">
         <span class="cb"></span>
         <span class="nm"><b>${it.e[0]}</b><small><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · მიზანი ${ms(it)} ${unit(it)}</small></span>
         <span class="val ${v?(hit(it,v)?'hit':''):'empty'}">${v?`${v}<small>${unit(it)}</small>`:'—'}</span></div>`;}).join('')+'</div>').join('');
-  $('#listMeta').textContent=`წრე ${S.today.round} · ${doneN()} / 10 შესრულებული`;
+  $('#listMeta').textContent=`წრე ${S.today.round} · ${doneN()} / ${N()} შესრულებული`;
   // ქვედა ზოლი
-  const n=doneN(),last=S.today.round>=3;
-  $('#rNum').textContent=S.today.round; $('#rDone').textContent=n; $('#rBar').style.width=n*10+'%';
-  $('#btnRound').textContent=last?'ვარჯიშის შენახვა':'წრე დასრულდა';
-  $('#btnRound').disabled=n===0&&!(S.today.roundReps);
-  $('#btnSave').classList.toggle('hidden',last||(n===0&&!S.today.roundReps));
+  const n=doneN(),any=n>0||!!S.today.roundReps;
+  $('#rNum').textContent=S.today.round; $('#rDone').textContent=n; $('#rTot').textContent=N(); $('#rBar').style.width=n/N()*100+'%';
+  $('#btnFinish').disabled=!any;
+  $('#btnNextRound').classList.toggle('hidden',S.today.round>=3||!any);
+  $('#btnNextRound').textContent=`წრე ${S.today.round+1} ›`;
   showCur(); renderNow(); renderStats();
 }
 function renderNow(){
   const it=items()[cur],d=!!S.today.done[it.id],v=S.today.reps[it.id];
-  if(doneN()>=10){
+  if(doneN()>=N()){
     const last=S.today.round>=3;
-    $('#now').innerHTML=`<div class="donebox"><b>წრე ${S.today.round} შესრულებულია 💪</b><p>${last?'სამივე წრე გავლილია. შეინახე დღევანდელი ვარჯიში.':'დაისვენე 3–5 წუთი და დაიწყე შემდეგი წრე.'}</p>
-      <button class="btn ${last?'ok':'pri'}" style="margin-top:12px;min-width:220px" onclick="$('#btnRound').click()">${last?'ვარჯიშის შენახვა':'დასვენება და შემდეგი წრე'}</button></div>`;
+    $('#now').innerHTML=`<div class="donebox"><b>წრე ${S.today.round} შესრულებულია 💪</b><p>${last?'სამივე წრე გავლილია.':'დაისვენე 3–5 წუთი და დაიწყე შემდეგი წრე, ან დაასრულე ვარჯიში.'}</p>
+      <div class="act" style="justify-content:center;flex-wrap:wrap">${last?'':`<button class="btn pri" onclick="$('#btnNextRound').click()">დასვენება და წრე ${S.today.round+1}</button>`}
+      <button class="btn ${last?'ok':'ghost'}" onclick="$('#btnFinish').click()">ვარჯიშის დასრულება</button></div></div>`;
     return;
   }
   $('#now').innerHTML=`<div class="eyebrow"><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · ${it.ph.n} · ${it.kind==='chest'?'უკმარისობამდე':(unit(it)==='წმ'?'რამდენ წამსაც გაუძლებ':'უკმარისობამდე')}</div>
@@ -334,19 +340,19 @@ function renderNow(){
     </div>`;
   $('#repIn').oninput=e=>{const n=+e.target.value||0;S.today.reps[it.id]=n;save();syncRow(it);const c=$('#msChip');c.className='ms'+(hit(it,n)?' hit':'');c.textContent=msText(it,n);};
   $('#btnDone').onclick=()=>{S.today.done[it.id]=!d;save();
-    if(!d){const nx=nextUndone(cur);render();if(doneN()<10)setCur(nx);}else render();};
+    if(!d){const nx=nextUndone(cur);render();if(doneN()<N())setCur(nx);}else render();};
 }
 const msText=(it,v)=>hit(it,v)?`🎯 მიზანი ${ms(it)} ${unit(it)} · მიღწეულია ✓`:`🎯 მიზანი: ${ms(it)} ${unit(it)}${it.kind==='chest'?' ერთ წრეზე':''}`;
 function syncRow(it){const r=document.querySelector(`.row[data-i="${cur}"] .val`),v=S.today.reps[it.id];
   if(r){r.className='val'+(v?(hit(it,v)?' hit':''):' empty');r.innerHTML=v?`${v}<small>${unit(it)}</small>`:'—';}}
 function showCur(){
   const it=items()[cur];
-  $('#pName').textContent=it.e[0]; $('#pStep').textContent=`${cur+1} / 10`;
+  $('#pName').textContent=it.e[0]; $('#pStep').textContent=`${cur+1} / ${N()}`;
   document.querySelectorAll('.row').forEach(el=>el.classList.toggle('on',+el.dataset.i===cur));
-  play(it.e[3], items()[(cur+1)%10].e[3]);
+  play(it.e[3], items()[(cur+1)%N()].e[3]);
 }
-function setCur(i){cur=(i+10)%10;showCur();renderNow();}
-function nextUndone(from){for(let k=1;k<=10;k++){const i=(from+k)%10;if(!S.today.done[items()[i].id])return i;}return (from+1)%10;}
+function setCur(i){cur=(i+N())%N();showCur();renderNow();}
+function nextUndone(from){for(let k=1;k<=N();k++){const i=(from+k)%N();if(!S.today.done[items()[i].id])return i;}return (from+1)%N();}
 
 // ---- კლიპი: ავტომატურად ირთვება, უხმოდ, მეორდება; შემდეგი წინასწარ იტვირთება ----
 const V=$('#vid'),PRE=$('#pre');
@@ -364,7 +370,7 @@ $('#btnNext').onclick=()=>setCur(cur+1); $('#btnPrev').onclick=()=>setCur(cur-1)
 // ---- სია: შეხება = არჩევა, ჩეკბოქსზე შეხება = შესრულდა ----
 $('#list').addEventListener('click',e=>{
   const row=e.target.closest('.row'); if(!row)return; const i=+row.dataset.i,it=items()[i];
-  if(e.target.closest('.cb')){S.today.done[it.id]=!S.today.done[it.id];save();render();if(S.today.done[it.id]&&doneN()<10)setCur(nextUndone(i));return;}
+  if(e.target.closest('.cb')){S.today.done[it.id]=!S.today.done[it.id];save();render();if(S.today.done[it.id]&&doneN()<N())setCur(nextUndone(i));return;}
   setCur(i); $('#now').scrollIntoView({behavior:'smooth',block:'nearest'});
 });
 $('#list').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const r=e.target.closest('.row');if(r){e.preventDefault();setCur(+r.dataset.i);}}});
@@ -386,18 +392,20 @@ function nextRound(){$('#rest').classList.add('hidden');foldRound();S.today.roun
 function finish(){
   const reps={...(S.today.roundReps||{})}; for(const k in S.today.reps)reps[k]=(reps[k]||0)+S.today.reps[k];
   const chest=Object.entries(reps).filter(([k])=>k[0]==='c').reduce((a,[,v])=>a+v,0);
-  const rounds=Math.max(1,S.today.round-(doneN()>=10?0:1));
-  S.history.push({d:new Date().toISOString().slice(0,10),l:S.level,r:rounds,chest,reps});
+  const full=doneN()>=N();
+  if(!full&&!confirm(`დავასრულო ვარჯიში ახლა? წრე ${S.today.round}: შესრულებული ${doneN()} / ${N()}.`))return;
+  const rounds=Math.max(1,S.today.round-(full?0:1)),now=localISO();
+  S.history.push({d:now.slice(0,10),t:now.slice(11,16),l:S.level,r:rounds,chest,reps});
   S.today={round:1,done:{},reps:{}}; save(); cur=0; render(); $('#views button[data-v="p"]').click();
 }
-$('#btnRound').onclick=()=>{ if(S.today.round>=3){finish();return;} $('#restNext').textContent=`წრე ${S.today.round+1}`; $('#rest').classList.remove('hidden'); startTimer(180); };
-$('#btnSave').onclick=()=>{if(confirm('შევინახო დღევანდელი ვარჯიში და დავასრულო?'))finish();};
+$('#btnNextRound').onclick=()=>{ $('#restNext').textContent=`წრე ${S.today.round+1}`; $('#rest').classList.remove('hidden'); startTimer(180); };
+$('#btnFinish').onclick=finish;
 document.querySelectorAll('#rest .opts button').forEach(b=>b.onclick=()=>startTimer(+b.dataset.t));
 $('#btnSkip').onclick=()=>{clearInterval(tInt);nextRound();};
 
 // ---- პროგრესი ----
 function renderStats(){
-  const H=S.history, iso=x=>x.toISOString().slice(0,10), days=new Set(H.map(h=>h.d));
+  const H=S.history, iso=x=>localISO(x).slice(0,10), days=new Set(H.map(h=>h.d));
   $('#sWork').textContent=H.length;
   let streak=0,d=new Date(); if(!days.has(iso(d)))d.setDate(d.getDate()-1);
   while(days.has(iso(d))){streak++;d.setDate(d.getDate()-1);}
@@ -408,6 +416,7 @@ function renderStats(){
   const last=H.slice(-12),mx=Math.max(1,...last.map(h=>h.chest)),ch=$('#chart');
   ch.classList.toggle('empty',!last.length);
   ch.innerHTML=last.length?last.map(h=>`<div style="height:${Math.max(3,h.chest/mx*100)}%" title="${h.d} · ${LV[h.l]} · ${h.r} წრე"><b>${h.chest}</b><span>${h.d.slice(5).replace('-','.')}</span></div>`).join(''):'პირველი შენახული ვარჯიშის შემდეგ აქ დიაგრამა გამოჩნდება.';
+  $('#hist tbody').innerHTML=H.slice(-10).reverse().map(h=>`<tr><td>${h.d.slice(8)}.${h.d.slice(5,7)}.${h.d.slice(0,4)} · <b>${h.t}</b><small>${LV[h.l]} · ${h.r} წრე</small></td><td>${h.chest} <small>გამ. მკერდზე</small></td></tr>`).join('')||'<tr><td style="color:var(--dim)">ჯერ არაფერია შენახული</td></tr>';
   const best={};H.forEach(h=>{for(const k in h.reps){const key=k+'|'+h.l;best[key]=Math.max(best[key]||0,h.reps[k]);}});
   const rows=Object.entries(best).filter(([,v])=>v>0).sort().map(([key,v])=>{const [id,l]=key.split('|'),i=+id.slice(1),e=(id[0]==='c'?PH[i].c:ABS)[+l];return `<tr><td>${e[0]}<small>${LV[+l]}</small></td><td>${v} ${e[4]||'გამ.'}</td></tr>`;});
   $('#best tbody').innerHTML=rows.join('')||'<tr><td style="color:var(--dim)">რეკორდები პირველი ვარჯიშის შემდეგ გამოჩნდება</td></tr>';
@@ -418,7 +427,7 @@ function renderStats(){
   const two=mine.slice(-2);
   if(two.length>=2&&two.every(allHit)){hint.className='hint up';
     hint.innerHTML=S.level<2?`💪 ბოლო 2 ვარჯიშში ყველა მკერდის მიზანი მიღწეულია. დროა გადახვიდე დონეზე „<b>${LV[S.level+1]}</b>“.`:`🏆 მოწინავე დონის ყველა მიზანი მიღწეულია. შეინარჩუნე კვირაში 2–3 ვარჯიში.`;return;}
-  if(H.length){const l=H[H.length-1];hint.className='hint';hint.textContent=`ბოლო ვარჯიში: ${l.d} · ${LV[l.l]} · ${l.r} წრე · ${l.chest} გამეორება მკერდზე. მიზანი კვირაში 2–3 ვარჯიშია.`;}
+  if(H.length){const l=H[H.length-1];hint.className='hint';hint.textContent=`ბოლო ვარჯიში: ${l.d} ${l.t} · ${LV[l.l]} · ${l.r} წრე · ${l.chest} გამეორება მკერდზე. მიზანი კვირაში 2–3 ვარჯიშია.`;}
 }
 $('#btnReset').onclick=()=>{if(confirm('ნამდვილად წავშალო ყველა შენახული პროგრესი?')){localStorage.removeItem(K);location.reload();}};
 render();

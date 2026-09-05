@@ -1,6 +1,6 @@
 // Service worker: აპი და კლიპები ოფლაინაც მუშაობს.
 // ვერსია შეცვალე, როცა index.html-ს ან კლიპებს ცვლი.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CORE = `core-${VERSION}`;
 const MEDIA = 'media-v1';
 const CLIPS = ['knee-pushaway','prowler-pushup','decline-pushups','knee-pushups','standard-pushup','archer-pushup-1',
