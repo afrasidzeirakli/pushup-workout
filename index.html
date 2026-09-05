@@ -40,7 +40,7 @@ h1,h2,h3,p{margin:0}
 .player{position:sticky;top:0;z-index:20;background:var(--bg);padding-top:6px;margin:0 calc(-1*var(--pad))}
 .player .in{margin:0 var(--pad);background:#000;border-radius:var(--r);overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.5)}
 .video{aspect-ratio:16/9;position:relative;background:#000;max-height:38vh}
-.video #yt,.video iframe{position:absolute;inset:0;width:100%;height:100%}
+.video video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
 .fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:13px;color:var(--muted);pointer-events:none}
 .fallback a{color:var(--abs);pointer-events:auto;margin-left:4px}
 .pbar{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;background:var(--panel)}
@@ -185,13 +185,13 @@ footer a{color:var(--muted)}
   <div class="player">
     <div class="in">
       <div class="video">
-        <div id="yt"></div>
-        <div class="fallback" id="fb">ვიდეო იტვირთება…</div>
+        <video id="vid" autoplay muted loop playsinline preload="auto" disablepictureinpicture aria-label="ვარჯიშის დემონსტრაცია"></video>
+        <video id="pre" muted preload="auto" hidden aria-hidden="true"></video>
+        <div class="fallback" id="fb">კლიპი იტვირთება…</div>
       </div>
       <div class="pbar">
         <span class="step" id="pStep">1 / 10</span>
         <span class="nm" id="pName">—</span>
-        <button class="ib" id="btnSound" aria-label="ხმის ჩართვა">🔇</button>
         <button class="ib" id="btnPrev" aria-label="წინა">‹</button>
         <button class="ib" id="btnNext" aria-label="შემდეგი">›</button>
       </div>
@@ -213,7 +213,7 @@ footer a{color:var(--muted)}
   <div class="sect"><h3>სრული სია</h3><span id="listMeta"></span></div>
   <div id="list"></div>
 
-  <footer>წყარო: <a href="https://learn.athleanx.com/articles/the-perfect-push-up-workout-3-levels" target="_blank" rel="noopener">ATHLEAN-X, The Perfect Push-Up Workout</a>. ვიდეო ATHLEAN-X-ის YouTube არხიდან. მონაცემები ინახება მხოლოდ ამ მოწყობილობის ბრაუზერში.</footer>
+  <footer>წყარო და კლიპები: <a href="https://learn.athleanx.com/articles/the-perfect-push-up-workout-3-levels" target="_blank" rel="noopener">ATHLEAN-X, The Perfect Push-Up Workout</a> · <a href="https://www.youtube.com/watch?v=AhdtowFDKT0" target="_blank" rel="noopener">სრული ვიდეო YouTube-ზე</a>. მონაცემები ინახება მხოლოდ ამ მოწყობილობის ბრაუზერში.</footer>
 </section>
 
 <!-- ============ პროგრესი ============ -->
@@ -259,48 +259,49 @@ footer a{color:var(--muted)}
 </div>
 
 <script>
-const VID='AhdtowFDKT0';
 const LV=['დამწყები','საშუალო','მოწინავე'];
 const LVH=['ვარიანტები მუხლებზე. თუ 10 სტანდარტულ პუშ-აპს ჯერ ვერ აკეთებ, აქ დაიწყე.',
            'ფეხის თითებზე. 10–20 სუფთა პუშ-აპი გამოგდის.',
            '20+ პუშ-აპი გამოგდის და ცალ ხელზე დატვირთვა არ გაშინებს.'];
-// [სახელი, ინგლისური, რჩევა, ვიდეო დაწყება, ვიდეო დასრულება, ერთეული]
+// კლიპები: სტატიის „გიფები“ (უხმო MP4 ლუპები ATHLEAN-X-ის CDN-იდან)
+const CDN='https://cfvideo.athleanx.com/2020/02/';
+// [სახელი, ინგლისური, რჩევა, კლიპი, ერთეული]
 const ABS=[
- ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.',245,258,'წმ'],
- ['V-სიტ მაკრატელი','V-Sit Scissor Hold','V-სიტ პოზიციაში ფეხები ჯვარედინად ამოძრავე ზემოთ-ქვემოთ. ტანი უძრავია.',263,277,'წმ'],
- ['მაკრატელი V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწიე ტანი და ფეხები, ფეხები მაკრატელით. დაშვება ნელა.',277,284,'გამ.']
+ ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.','v-sit-hold','წმ'],
+ ['V-სიტ მაკრატელი','V-Sit Scissor Hold','V-სიტ პოზიციაში ფეხები ჯვარედინად ამოძრავე ზემოთ-ქვემოთ. ტანი უძრავია.','v-sit-scissor-hold','წმ'],
+ ['მაკრატელი V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწიე ტანი და ფეხები, ფეხები მაკრატელით. დაშვება ნელა.','scissor-v-up','გამ.']
 ];
 const PH=[
  {n:'ზედა მკერდი', d:'ხელები ქვემოდან ზემოთ', c:[
-   ['უკან გაწევა მუხლებზე','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ იატაკზე. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.',158,174],
-   ['პრაულერ პუშ-აპი','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.',178,189],
-   ['დაქანებული პუშ-აპი','Decline Push-Up','ფეხები კედელზე ან სკამზე. მკერდი ხელებამდე დაუშვი და ბოლომდე აიწიე.',190,205]]},
+   ['უკან გაწევა მუხლებზე','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ იატაკზე. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.','knee-pushaway'],
+   ['პრაულერ პუშ-აპი','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.','prowler-pushup'],
+   ['დაქანებული პუშ-აპი','Decline Push-Up','ფეხები კედელზე ან სკამზე. მკერდი ხელებამდე დაუშვი და ბოლომდე აიწიე.','decline-pushups']]},
  {n:'შუა მკერდი', d:'ხელები მკერდის დონეზე', c:[
-   ['პუშ-აპი მუხლებზე','Kneeling Push-Up','ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ მკლავები ბოლომდე გაშალე.',290,300],
-   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.',300,318],
-   ['მშვილდოსნის პუშ-აპი','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.',320,334]]},
+   ['პუშ-აპი მუხლებზე','Kneeling Push-Up','ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ მკლავები ბოლომდე გაშალე.','knee-pushups'],
+   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.','standard-pushup'],
+   ['მშვილდოსნის პუშ-აპი','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.','archer-pushup-1']]},
  {n:'ქვედა მკერდი', d:'ხელები ზემოდან ქვემოთ, დიპსების მსგავსად', c:[
-   ['პუშ-აპი ამაღლებულ ზედაპირზე','Incline Push-Up','ხელები სკამზე ან მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.',375,390],
-   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ, თითები გვერდზე ან უკან. ტანი წინ გადახრილი, მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.',394,409],
-   ['მოდიფიცირებული ინდური პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა. თავი ხელებს შორის ქვემოთ ჩაყვინთე და წინ-ზემოთ გაცურდი. აქცენტი წინ გადასვლაზეა.',414,430]]},
+   ['პუშ-აპი ამაღლებულ ზედაპირზე','Incline Push-Up','ხელები სკამზე ან მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.','incline-pushups'],
+   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ, თითები გვერდზე ან უკან. ტანი წინ გადახრილი, მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.','psuedo-planche'],
+   ['მოდიფიცირებული ინდური პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა. თავი ხელებს შორის ქვემოთ ჩაყვინთე და წინ-ზემოთ გაცურდი. აქცენტი წინ გადასვლაზეა.','modified-hindu-pushup']]},
  {n:'ადუქცია', d:'ხელი სხეულისკენ მოძრაობს', star:1, c:[
-   ['მობრუნებით პუშ-აპი მუხლებზე','Twisting Kneeling Push-Up','აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ ის ხელი მკერდის ქვეშ გადავიდეს. მხარეები მონაცვლეობით.',488,496],
-   ['მობრუნებით პუშ-აპი','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.',503,519],
-   ['ჯვარედინი პუშ-აპი რეზინით','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.',520,540]]},
+   ['მობრუნებით პუშ-აპი მუხლებზე','Twisting Kneeling Push-Up','აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ ის ხელი მკერდის ქვეშ გადავიდეს. მხარეები მონაცვლეობით.','twisting-knee-pushups'],
+   ['მობრუნებით პუშ-აპი','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.','twisting-pushup'],
+   ['ჯვარედინი პუშ-აპი რეზინით','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.','banded-crossover-pushups']]},
  {n:'ექსპლოზიური', d:'სწრაფად და ძლიერად', star:1, c:[
-   ['პლიო პუშ-აპი მუხლებზე','Lateral Knee Plyo Push-Up','ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.',553,569],
-   ['პუშ-აპი ხელების მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე, დააბრუნე და ძლიერად აისროლე ზემოთ.',573,584],
-   ['ბროკის შაფლი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად შაფლით გადაადგილდება. ატლეტური და მძიმე.',613,627]]}
+   ['პლიო პუშ-აპი მუხლებზე','Lateral Knee Plyo Push-Up','ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.','lateral-knee-plyo-pushups'],
+   ['პუშ-აპი ხელების მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე, დააბრუნე და ძლიერად აისროლე ზემოთ.','double-hand-release-plyo-pushup'],
+   ['ბროკის შაფლი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად შაფლით გადაადგილდება. ატლეტური და მძიმე.','brock-shuffle-pushups']]}
 ];
 
 const K='pushup-ka-v1';
 let S=JSON.parse(localStorage.getItem(K)||'{}');
-S.level??=0; S.history??=[]; S.today??={round:1,done:{},reps:{}}; S.sound??=false;
+S.level??=0; S.history??=[]; S.today??={round:1,done:{},reps:{}};
 const save=()=>localStorage.setItem(K,JSON.stringify(S));
 const $=s=>document.querySelector(s);
 const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest'},{id:`a${i}`,ph:p,e:ABS[S.level],kind:'abs'}]);
 const doneN=()=>Object.values(S.today.done).filter(Boolean).length;
-const unit=it=>it.e[5]||'გამ.';
+const unit=it=>it.e[4]||'გამ.';
 let cur=0;
 
 function render(){
@@ -349,26 +350,22 @@ function showCur(){
   const it=items()[cur];
   $('#pName').textContent=it.e[0]; $('#pStep').textContent=`${cur+1} / 10`;
   document.querySelectorAll('.row').forEach(el=>el.classList.toggle('on',+el.dataset.i===cur));
-  play(it.e[3],it.e[4]);
+  play(it.e[3], items()[(cur+1)%10].e[3]);
 }
 function setCur(i){cur=(i+10)%10;showCur();renderNow();}
 function nextUndone(from){for(let k=1;k<=10;k++){const i=(from+k)%10;if(!S.today.done[items()[i].id])return i;}return (from+1)%10;}
 
-// ---- YouTube: ავტომატური ჩართვა უხმოდ, მონაკვეთის გამეორება ----
-let P,ready=false,clip=[158,174];
-function play(a,b){if(clip[0]===a&&clip[1]===b&&ready)return;clip=[a,b];if(!ready)return;P.loadVideoById({videoId:VID,startSeconds:a,endSeconds:b});S.sound?P.unMute():P.mute();}
-window.onYouTubeIframeAPIReady=()=>{
-  P=new YT.Player('yt',{videoId:VID,playerVars:{autoplay:1,mute:1,controls:0,rel:0,playsinline:1,modestbranding:1,start:clip[0],end:clip[1],origin:location.origin},
-   events:{onReady:()=>{ready=true;$('#fb').classList.add('hidden');P.mute();P.loadVideoById({videoId:VID,startSeconds:clip[0],endSeconds:clip[1]});}}});
-  setInterval(()=>{if(!ready)return;const st=P.getPlayerState(),t=P.getCurrentTime();
-    if(st===0||t>=clip[1]-.3)P.seekTo(clip[0],true);
-    if(st!==1&&st!==3)P.playVideo();},400);
-};
-const tag=document.createElement('script');tag.src='https://www.youtube.com/iframe_api';document.head.appendChild(tag);
-setTimeout(()=>{if(!ready)$('#fb').innerHTML='ვიდეო ვერ ჩაირთო. <a href="https://youtu.be/'+VID+'?t='+clip[0]+'" target="_blank" rel="noopener">გახსენი YouTube-ზე</a>';},8000);
-document.addEventListener('pointerdown',()=>{if(ready&&P.getPlayerState()!==1)P.playVideo();},{passive:true});
-const soundUI=()=>{$('#btnSound').textContent=S.sound?'🔊':'🔇';$('#btnSound').setAttribute('aria-label',S.sound?'ხმის გამორთვა':'ხმის ჩართვა');};
-$('#btnSound').onclick=()=>{S.sound=!S.sound;save();soundUI();if(ready){S.sound?P.unMute():P.mute();}};soundUI();
+// ---- კლიპი: ავტომატურად ირთვება, უხმოდ, მეორდება; შემდეგი წინასწარ იტვირთება ----
+const V=$('#vid'),PRE=$('#pre');
+function play(clip,nextClip){
+  const src=CDN+clip+'.mp4';
+  if(V.dataset.clip!==clip){V.dataset.clip=clip;$('#fb').classList.add('hidden');V.src=src;V.load();}
+  V.play().catch(()=>{});
+  if(nextClip&&PRE.dataset.clip!==nextClip){PRE.dataset.clip=nextClip;PRE.src=CDN+nextClip+'.mp4';}
+}
+V.addEventListener('error',()=>{$('#fb').innerHTML='კლიპი ვერ ჩაიტვირთა. <a href="https://learn.athleanx.com/articles/the-perfect-push-up-workout-3-levels" target="_blank" rel="noopener">ნახე სტატიაზე</a>';$('#fb').classList.remove('hidden');});
+document.addEventListener('pointerdown',()=>{if(V.paused)V.play().catch(()=>{});},{passive:true});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&V.paused)V.play().catch(()=>{});});
 $('#btnNext').onclick=()=>setCur(cur+1); $('#btnPrev').onclick=()=>setCur(cur-1);
 
 // ---- სია: შეხება = არჩევა, ჩეკბოქსზე შეხება = შესრულდა ----
@@ -419,7 +416,7 @@ function renderStats(){
   ch.classList.toggle('empty',!last.length);
   ch.innerHTML=last.length?last.map(h=>`<div style="height:${Math.max(3,h.chest/mx*100)}%" title="${h.d} · ${LV[h.l]} · ${h.r} წრე"><b>${h.chest}</b><span>${h.d.slice(5).replace('-','.')}</span></div>`).join(''):'პირველი შენახული ვარჯიშის შემდეგ აქ დიაგრამა გამოჩნდება.';
   const best={};H.forEach(h=>{for(const k in h.reps){const key=k+'|'+h.l;best[key]=Math.max(best[key]||0,h.reps[k]);}});
-  const rows=Object.entries(best).filter(([,v])=>v>0).sort().map(([key,v])=>{const [id,l]=key.split('|'),i=+id.slice(1),e=(id[0]==='c'?PH[i].c:ABS)[+l];return `<tr><td>${e[0]}<small>${LV[+l]}</small></td><td>${v} ${e[5]||'გამ.'}</td></tr>`;});
+  const rows=Object.entries(best).filter(([,v])=>v>0).sort().map(([key,v])=>{const [id,l]=key.split('|'),i=+id.slice(1),e=(id[0]==='c'?PH[i].c:ABS)[+l];return `<tr><td>${e[0]}<small>${LV[+l]}</small></td><td>${v} ${e[4]||'გამ.'}</td></tr>`;});
   $('#best tbody').innerHTML=rows.join('')||'<tr><td style="color:var(--dim)">რეკორდები პირველი ვარჯიშის შემდეგ გამოჩნდება</td></tr>';
   const mine=H.filter(h=>h.l===S.level).slice(-3),hint=$('#levelHint');
   hint.className='hint hidden';
