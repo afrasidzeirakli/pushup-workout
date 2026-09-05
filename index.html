@@ -75,6 +75,8 @@ h1,h2,h3,p{margin:0}
 .btn.ok{background:var(--ok);color:#06210f}
 .btn.pri{background:var(--chest);color:#fff}
 .btn.ghost{background:var(--panel2);color:var(--text)}
+.btn.run{background:var(--warn);color:#2a1a00;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.75}}
 .btn:disabled{opacity:.45;cursor:default}
 .btn:active:not(:disabled){transform:scale(.98)}
 .donebox{text-align:center;padding:10px 0 2px}
@@ -334,12 +336,24 @@ function renderNow(){
     <h2>${it.e[0]}</h2><div class="en">${it.e[1]} · ${LV[S.level]}</div>
     <p class="cue">${it.e[2]}</p>
     <div class="ms ${hit(it,v)?'hit':''}" id="msChip">${msText(it,v)}</div>
+    ${unit(it)==='წმ'?`
+    <div class="act">
+      <div class="res"><label>წამზომი</label><input id="repIn" type="number" min="0" inputmode="numeric" placeholder="0" value="${v??''}" aria-label="წამები"><span>წმ</span></div>
+      <button class="btn pri" id="btnTimer">▶ დაწყება</button>
+    </div>
+    <button class="btn ${d?'ghost':'ok'}" id="btnDone" style="width:100%;margin-top:10px">${d?'გაუქმება':'შესრულდა ✓'}</button>`:`
     <div class="act">
       <div class="res"><label>შედეგი</label><input id="repIn" type="number" min="0" inputmode="numeric" placeholder="0" value="${v??''}" aria-label="შედეგი"><span>${unit(it)}</span></div>
       <button class="btn ${d?'ghost':'ok'}" id="btnDone">${d?'გაუქმება':'შესრულდა ✓'}</button>
-    </div>`;
+    </div>`}`;
+  const tb=$('#btnTimer'); if(tb)tb.onclick=()=>{
+    if(SW.int){stopSW();return;}
+    SW.start=Date.now(); $('#repIn').value=0; $('#repIn').dispatchEvent(new Event('input'));
+    tb.textContent='■ სტოპ'; tb.classList.add('run');
+    SW.int=setInterval(()=>{$('#repIn').value=Math.round((Date.now()-SW.start)/1000);$('#repIn').dispatchEvent(new Event('input'));},250);
+  };
   $('#repIn').oninput=e=>{const n=+e.target.value||0;S.today.reps[it.id]=n;save();syncRow(it);const c=$('#msChip');c.className='ms'+(hit(it,n)?' hit':'');c.textContent=msText(it,n);};
-  $('#btnDone').onclick=()=>{S.today.done[it.id]=!d;save();
+  $('#btnDone').onclick=()=>{stopSW();S.today.done[it.id]=!d;save();
     if(!d){const nx=nextUndone(cur);render();if(doneN()<N())setCur(nx);}else render();};
 }
 const msText=(it,v)=>hit(it,v)?`🎯 მიზანი ${ms(it)} ${unit(it)} · მიღწეულია ✓`:`🎯 მიზანი: ${ms(it)} ${unit(it)}${it.kind==='chest'?' ერთ წრეზე':''}`;
@@ -351,7 +365,10 @@ function showCur(){
   document.querySelectorAll('.row').forEach(el=>el.classList.toggle('on',+el.dataset.i===cur));
   play(it.e[3], items()[(cur+1)%N()].e[3]);
 }
-function setCur(i){cur=(i+N())%N();showCur();renderNow();}
+function setCur(i){stopSW();cur=(i+N())%N();showCur();renderNow();}
+// წამზომი პრესის სტატიკური ვარჯიშებისთვის
+const SW={int:null,start:0};
+function stopSW(){if(!SW.int)return;clearInterval(SW.int);SW.int=null;const b=$('#btnTimer');if(b){b.textContent='▶ თავიდან';b.classList.remove('run');}try{navigator.vibrate&&navigator.vibrate(60);}catch(e){}}
 function nextUndone(from){for(let k=1;k<=N();k++){const i=(from+k)%N();if(!S.today.done[items()[i].id])return i;}return (from+1)%N();}
 
 // ---- კლიპი: ავტომატურად ირთვება, უხმოდ, მეორდება; შემდეგი წინასწარ იტვირთება ----
