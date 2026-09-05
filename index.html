@@ -75,16 +75,6 @@ h1,h2,h3,p{margin:0}
 .donebox b{display:block;font-size:20px}
 .donebox p{color:var(--muted);font-size:14px;margin-top:4px}
 
-/* როგორ მუშაობს */
-.how{margin:14px 0 0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:0 16px}
-.how summary{list-style:none;cursor:pointer;padding:13px 0;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center}
-.how summary::-webkit-details-marker{display:none}
-.how summary::after{content:"+";color:var(--muted);font-size:18px;font-weight:400}
-.how[open] summary::after{content:"–"}
-.how ol{margin:0;padding:0 0 14px 0;list-style:none;counter-reset:s;font-size:14px;color:#d3d9e3}
-.how li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;gap:8px;padding:6px 0}
-.how li::before{content:counter(s);width:22px;height:22px;border-radius:50%;background:var(--panel2);color:var(--muted);font-size:12px;font-weight:700;display:grid;place-items:center}
-.how li b{color:var(--text)}
 
 /* სია */
 .sect{display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 10px}
@@ -111,6 +101,9 @@ h1,h2,h3,p{margin:0}
 .row .val{font-size:14px;font-weight:700;color:var(--text);text-align:right;white-space:nowrap}
 .row .val small{display:block;font-size:11px;color:var(--dim);font-weight:400;line-height:1.1}
 .row .val.empty{color:var(--dim);font-weight:400}
+.row .val.hit{color:var(--ok)}
+.ms{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:var(--panel2);color:var(--muted)}
+.ms.hit{background:rgba(56,210,127,.14);color:var(--ok)}
 
 /* ქვედა ზოლი */
 .bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(14,16,20,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:10px var(--pad) calc(10px + env(safe-area-inset-bottom))}
@@ -200,15 +193,6 @@ footer a{color:var(--muted)}
 
   <section class="now" id="now"></section>
 
-  <details class="how" id="how">
-    <summary>როგორ მუშაობს პროგრამა</summary>
-    <ol>
-      <li><span></span><span><b>მკერდის ვარჯიში უკმარისობამდე.</b> გამეორებების რიცხვი წინასწარ არ არის. აკეთე, სანამ სწორი ტექნიკით შეგიძლია, და ჩაწერე, რამდენი გამოვიდა.</span></li>
-      <li><span></span><span><b>დასვენების ნაცვლად პრესი.</b> მკერდის ვარჯიშის შემდეგ პაუზა კი არა, პრესის ვარჯიშია. მერე ისევ მკერდი.</span></li>
-      <li><span></span><span><b>5 წყვილი = 1 წრე.</b> წრის შემდეგ 3–5 წუთი დასვენება და თავიდან. სულ 2–3 წრე.</span></li>
-      <li><span></span><span><b>⭐ ადუქცია და ექსპლოზიური</b> ყველაზე ეფექტური ფაზებია. თუ დრო არ არის, მაინც ეს ორი გააკეთე.</span></li>
-    </ol>
-  </details>
 
   <div class="sect"><h3>სრული სია</h3><span id="listMeta"></span></div>
   <div id="list"></div>
@@ -267,31 +251,31 @@ const LVH=['ვარიანტები მუხლებზე. თუ 10 �
 const CDN='https://cfvideo.athleanx.com/2020/02/';
 // [სახელი, ინგლისური, რჩევა, კლიპი, ერთეული]
 const ABS=[
- ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.','v-sit-hold','წმ'],
- ['V-სიტ მაკრატელი','V-Sit Scissor Hold','V-სიტ პოზიციაში ფეხები ჯვარედინად ამოძრავე ზემოთ-ქვემოთ. ტანი უძრავია.','v-sit-scissor-hold','წმ'],
- ['მაკრატელი V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწიე ტანი და ფეხები, ფეხები მაკრატელით. დაშვება ნელა.','scissor-v-up','გამ.']
+ ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.','v-sit-hold','წმ',30],
+ ['V-სიტ მაკრატელი','V-Sit Scissor Hold','V-სიტ პოზიციაში ფეხები ჯვარედინად ამოძრავე ზემოთ-ქვემოთ. ტანი უძრავია.','v-sit-scissor-hold','წმ',30],
+ ['მაკრატელი V-აპი','Scissor V-Up','წოლიდან ერთდროულად აწიე ტანი და ფეხები, ფეხები მაკრატელით. დაშვება ნელა.','scissor-v-up','გამ.',15]
 ];
 const PH=[
  {n:'ზედა მკერდი', d:'ხელები ქვემოდან ზემოთ', c:[
-   ['უკან გაწევა მუხლებზე','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ იატაკზე. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.','knee-pushaway'],
-   ['პრაულერ პუშ-აპი','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.','prowler-pushup'],
-   ['დაქანებული პუშ-აპი','Decline Push-Up','ფეხები კედელზე ან სკამზე. მკერდი ხელებამდე დაუშვი და ბოლომდე აიწიე.','decline-pushups']]},
+   ['უკან გაწევა მუხლებზე','Knee Pushaway','მუხლებზე დგახარ, ხელები წინ იატაკზე. მთელი სხეული ხელებით უკან-ზემოთ გაწიე და დაბრუნდი. მკლავები ბოლომდე გაშალე.','knee-pushaway','',15],
+   ['პრაულერ პუშ-აპი','Prowler Push-Up','მენჯი მაღლა, ხელები თავის წინ. დაწექი და აიწიე ისე, თითქოს მძიმე ციგას წინ და ზემოთ აწევ.','prowler-pushup','',12],
+   ['დაქანებული პუშ-აპი','Decline Push-Up','ფეხები კედელზე ან სკამზე. მკერდი ხელებამდე დაუშვი და ბოლომდე აიწიე.','decline-pushups','',20]]},
  {n:'შუა მკერდი', d:'ხელები მკერდის დონეზე', c:[
-   ['პუშ-აპი მუხლებზე','Kneeling Push-Up','ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ მკლავები ბოლომდე გაშალე.','knee-pushups'],
-   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.','standard-pushup'],
-   ['მშვილდოსნის პუშ-აპი','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.','archer-pushup-1']]},
+   ['პუშ-აპი მუხლებზე','Kneeling Push-Up','ხელები მხრების სიგანეზე. ტანი სწორი ხაზია მუხლიდან თავამდე. ზემოთ მკლავები ბოლომდე გაშალე.','knee-pushups','',20],
+   ['სტანდარტული პუშ-აპი','Standard Push-Up','ფეხის თითებზე, ხელები მხრების სიგანეზე, იდაყვები დაახლოებით 45°-ით. მკერდი იატაკს თითქმის ეხება.','standard-pushup','',25],
+   ['მშვილდოსნის პუშ-აპი','Archer Push-Up','ხელები ფართოდ. ერთ ხელზე დაწექი, მეორე გაშლილი გვერდზე რჩება. მხარეები მონაცვლეობით.','archer-pushup-1','',12]]},
  {n:'ქვედა მკერდი', d:'ხელები ზემოდან ქვემოთ, დიპსების მსგავსად', c:[
-   ['პუშ-აპი ამაღლებულ ზედაპირზე','Incline Push-Up','ხელები სკამზე ან მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.','incline-pushups'],
-   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ, თითები გვერდზე ან უკან. ტანი წინ გადახრილი, მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.','psuedo-planche'],
-   ['მოდიფიცირებული ინდური პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა. თავი ხელებს შორის ქვემოთ ჩაყვინთე და წინ-ზემოთ გაცურდი. აქცენტი წინ გადასვლაზეა.','modified-hindu-pushup']]},
+   ['პუშ-აპი ამაღლებულ ზედაპირზე','Incline Push-Up','ხელები სკამზე ან მაგიდაზე, ფეხები იატაკზე. ტანი სწორი, მკერდი ხელებამდე დაუშვი.','incline-pushups','',20],
+   ['ფსევდო-პლანში პუშ-აპი','Pseudo Planche Push-Up','ხელები წელისკენ, თითები გვერდზე ან უკან. ტანი წინ გადახრილი, მხრები ხელებზე წინ. მძიმეა, გამეორება ცოტა იქნება.','psuedo-planche','',10],
+   ['მოდიფიცირებული ინდური პუშ-აპი','Modified Hindu Push-Up','მენჯი მაღლა. თავი ხელებს შორის ქვემოთ ჩაყვინთე და წინ-ზემოთ გაცურდი. აქცენტი წინ გადასვლაზეა.','modified-hindu-pushup','',12]]},
  {n:'ადუქცია', d:'ხელი სხეულისკენ მოძრაობს', star:1, c:[
-   ['მობრუნებით პუშ-აპი მუხლებზე','Twisting Kneeling Push-Up','აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ ის ხელი მკერდის ქვეშ გადავიდეს. მხარეები მონაცვლეობით.','twisting-knee-pushups'],
-   ['მობრუნებით პუშ-აპი','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.','twisting-pushup'],
-   ['ჯვარედინი პუშ-აპი რეზინით','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.','banded-crossover-pushups']]},
+   ['მობრუნებით პუშ-აპი მუხლებზე','Twisting Kneeling Push-Up','აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ ის ხელი მკერდის ქვეშ გადავიდეს. მხარეები მონაცვლეობით.','twisting-knee-pushups','',12],
+   ['მობრუნებით პუშ-აპი','Twisting Push-Up','ფეხის თითებზე. აწევისას ტანი ერთი ხელისკენ მოაბრუნე, რომ მკერდი შეიკუმშოს. მხარეები მონაცვლეობით.','twisting-pushup','',16],
+   ['ჯვარედინი პუშ-აპი რეზინით','Banded Crossover Push-Up','რეზინის ლენტი ფეხზე და ხელზე. ზემოთ ასვლისას ხელი რეზინის წინააღმდეგ სხეულის შუა ხაზისკენ გადაიტანე.','banded-crossover-pushups','',12]]},
  {n:'ექსპლოზიური', d:'სწრაფად და ძლიერად', star:1, c:[
-   ['პლიო პუშ-აპი მუხლებზე','Lateral Knee Plyo Push-Up','ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.','lateral-knee-plyo-pushups'],
-   ['პუშ-აპი ხელების მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე, დააბრუნე და ძლიერად აისროლე ზემოთ.','double-hand-release-plyo-pushup'],
-   ['ბროკის შაფლი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად შაფლით გადაადგილდება. ატლეტური და მძიმე.','brock-shuffle-pushups']]}
+   ['პლიო პუშ-აპი მუხლებზე','Lateral Knee Plyo Push-Up','ძლიერად აისროლე თავი იატაკიდან და ხელები გვერდზე გადაადგილე, მერე უკან. რბილად ჩამოდი.','lateral-knee-plyo-pushups','',12],
+   ['პუშ-აპი ხელების მოხსნით','Double Hand Release Push-Up','ქვედა წერტილში ორივე ხელი იატაკიდან მოწყვიტე, დააბრუნე და ძლიერად აისროლე ზემოთ.','double-hand-release-plyo-pushup','',12],
+   ['ბროკის შაფლი','Brock Shuffle Push-Up','ექსპლოზიური პუშ-აპი, რომლის დროსაც ხელები და ფეხები გვერდულად შაფლით გადაადგილდება. ატლეტური და მძიმე.','brock-shuffle-pushups','',12]]}
 ];
 
 const K='pushup-ka-v1';
@@ -302,20 +286,21 @@ const $=s=>document.querySelector(s);
 const items=()=>PH.flatMap((p,i)=>[{id:`c${i}`,ph:p,e:p.c[S.level],kind:'chest'},{id:`a${i}`,ph:p,e:ABS[S.level],kind:'abs'}]);
 const doneN=()=>Object.values(S.today.done).filter(Boolean).length;
 const unit=it=>it.e[4]||'გამ.';
+const ms=it=>it.e[5]||0;
+const hit=(it,v)=>!!v&&v>=ms(it);
 let cur=0;
 
 function render(){
   document.querySelectorAll('#levels button').forEach(b=>b.classList.toggle('on',+b.dataset.l===S.level));
   $('#lvlhint').textContent=LVH[S.level];
-  $('#how').open=!S.history.length;
   const list=items();
   // სია
   $('#list').innerHTML=PH.map((p,i)=>`<div class="ph"><div class="phh"><b>${i+1}. ${p.n}</b><small>${p.d}</small>${p.star?'<span class="star">⭐ ეფექტური</span>':''}</div>`+
     [list[i*2],list[i*2+1]].map((it,j)=>{const idx=i*2+j,d=!!S.today.done[it.id],v=S.today.reps[it.id];
       return `<div class="row ${it.kind} ${idx===cur?'on':''} ${d?'done':''}" data-i="${idx}" role="button" tabindex="0" aria-pressed="${d}">
         <span class="cb"></span>
-        <span class="nm"><b>${it.e[0]}</b><small><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · ${it.e[1]}</small></span>
-        <span class="val ${v?'':'empty'}">${v?`${v}<small>${unit(it)}</small>`:'—'}</span></div>`;}).join('')+'</div>').join('');
+        <span class="nm"><b>${it.e[0]}</b><small><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · მიზანი ${ms(it)} ${unit(it)}</small></span>
+        <span class="val ${v?(hit(it,v)?'hit':''):'empty'}">${v?`${v}<small>${unit(it)}</small>`:'—'}</span></div>`;}).join('')+'</div>').join('');
   $('#listMeta').textContent=`წრე ${S.today.round} · ${doneN()} / 10 შესრულებული`;
   // ქვედა ზოლი
   const n=doneN(),last=S.today.round>=3;
@@ -336,16 +321,18 @@ function renderNow(){
   $('#now').innerHTML=`<div class="eyebrow"><span class="dot ${it.kind}"></span>${it.kind==='chest'?'მკერდი':'პრესი'} · ${it.ph.n} · ${it.kind==='chest'?'უკმარისობამდე':(unit(it)==='წმ'?'რამდენ წამსაც გაუძლებ':'უკმარისობამდე')}</div>
     <h2>${it.e[0]}</h2><div class="en">${it.e[1]} · ${LV[S.level]}</div>
     <p class="cue">${it.e[2]}</p>
+    <div class="ms ${hit(it,v)?'hit':''}" id="msChip">${msText(it,v)}</div>
     <div class="act">
       <div class="res"><label>შედეგი</label><input id="repIn" type="number" min="0" inputmode="numeric" placeholder="0" value="${v??''}" aria-label="შედეგი"><span>${unit(it)}</span></div>
       <button class="btn ${d?'ghost':'ok'}" id="btnDone">${d?'გაუქმება':'შესრულდა ✓'}</button>
     </div>`;
-  $('#repIn').oninput=e=>{S.today.reps[it.id]=+e.target.value||0;save();syncRow(it);};
+  $('#repIn').oninput=e=>{const n=+e.target.value||0;S.today.reps[it.id]=n;save();syncRow(it);const c=$('#msChip');c.className='ms'+(hit(it,n)?' hit':'');c.textContent=msText(it,n);};
   $('#btnDone').onclick=()=>{S.today.done[it.id]=!d;save();
     if(!d){const nx=nextUndone(cur);render();if(doneN()<10)setCur(nx);}else render();};
 }
+const msText=(it,v)=>hit(it,v)?`🎯 მიზანი ${ms(it)} ${unit(it)} · მიღწეულია ✓`:`🎯 მიზანი: ${ms(it)} ${unit(it)}${it.kind==='chest'?' ერთ წრეზე':''}`;
 function syncRow(it){const r=document.querySelector(`.row[data-i="${cur}"] .val`),v=S.today.reps[it.id];
-  if(r){r.className='val'+(v?'':' empty');r.innerHTML=v?`${v}<small>${unit(it)}</small>`:'—';}}
+  if(r){r.className='val'+(v?(hit(it,v)?' hit':''):' empty');r.innerHTML=v?`${v}<small>${unit(it)}</small>`:'—';}}
 function showCur(){
   const it=items()[cur];
   $('#pName').textContent=it.e[0]; $('#pStep').textContent=`${cur+1} / 10`;
@@ -420,8 +407,11 @@ function renderStats(){
   $('#best tbody').innerHTML=rows.join('')||'<tr><td style="color:var(--dim)">რეკორდები პირველი ვარჯიშის შემდეგ გამოჩნდება</td></tr>';
   const mine=H.filter(h=>h.l===S.level).slice(-3),hint=$('#levelHint');
   hint.className='hint hidden';
-  if(mine.length>=3&&S.level<2){const avg=mine.reduce((a,h)=>a+h.chest/(h.r||1)/5,0)/mine.length;
-    if(avg>=15){hint.className='hint up';hint.innerHTML=`💪 ბოლო 3 ვარჯიშში საშუალოდ <b>${Math.round(avg)}</b> გამეორება გამოგდის თითო მკერდის ვარჯიშზე. დროა გადახვიდე დონეზე „${LV[S.level+1]}“.`;return;}}
+  // მიზნები: თუ ბოლო 2 ვარჯიშში ამ დონეზე ყველა მკერდის ვარჯიშმა წრეზე მიზანს მიაღწია
+  const allHit=h=>PH.every((p,i)=>(h.reps['c'+i]||0)/(h.r||1)>=(p.c[h.l][5]||0));
+  const two=mine.slice(-2);
+  if(two.length>=2&&two.every(allHit)){hint.className='hint up';
+    hint.innerHTML=S.level<2?`💪 ბოლო 2 ვარჯიშში ყველა მკერდის მიზანი მიღწეულია. დროა გადახვიდე დონეზე „<b>${LV[S.level+1]}</b>“.`:`🏆 მოწინავე დონის ყველა მიზანი მიღწეულია. შეინარჩუნე კვირაში 2–3 ვარჯიში.`;return;}
   if(H.length){const l=H[H.length-1];hint.className='hint';hint.textContent=`ბოლო ვარჯიში: ${l.d} · ${LV[l.l]} · ${l.r} წრე · ${l.chest} გამეორება მკერდზე. მიზანი კვირაში 2–3 ვარჯიშია.`;}
 }
 $('#btnReset').onclick=()=>{if(confirm('ნამდვილად წავშალო ყველა შენახული პროგრესი?')){localStorage.removeItem(K);location.reload();}};
