@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e1014">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="მკერდი + პრესი">
 <title>მკერდი + პრესი · პუშ-აპების პროგრამა</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;700&display=swap" rel="stylesheet">
@@ -247,8 +253,8 @@ const LV=['დამწყები','საშუალო','მოწინა
 const LVH=['ვარიანტები მუხლებზე. თუ 10 სტანდარტულ პუშ-აპს ჯერ ვერ აკეთებ, აქ დაიწყე.',
            'ფეხის თითებზე. 10–20 სუფთა პუშ-აპი გამოგდის.',
            '20+ პუშ-აპი გამოგდის და ცალ ხელზე დატვირთვა არ გაშინებს.'];
-// კლიპები: სტატიის „გიფები“ (უხმო MP4 ლუპები ATHLEAN-X-ის CDN-იდან)
-const CDN='https://cfvideo.athleanx.com/2020/02/';
+// კლიპები: სტატიის „გიფები“ (უხმო MP4 ლუპები), რეპოშივე clips/ ფოლდერში
+const CDN='clips/';
 // [სახელი, ინგლისური, რჩევა, კლიპი, ერთეული]
 const ABS=[
  ['V-სიტ სტატიკა','V-Sit Hold','დაჯექი, ფეხები აწიე, ტანი ოდნავ უკან, ზურგი სწორი. გაუძლე, რამდენ წამსაც შეძლებ.','v-sit-hold','წმ',30],
@@ -416,6 +422,7 @@ function renderStats(){
 }
 $('#btnReset').onclick=()=>{if(confirm('ნამდვილად წავშალო ყველა შენახული პროგრესი?')){localStorage.removeItem(K);location.reload();}};
 render();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
